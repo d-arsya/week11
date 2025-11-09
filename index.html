@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <link rel="stylesheet" href="style.css" />
+  <body>
+    <article class="markdown-body">
+      <h1>Week 11 - Pengolahan Dokumen untuk Manajemen Informasi Kesehatan</h1>
+      <p>
+        <strong>Dosen:</strong> Muhammad Oriza Nurfajri, S.Kom., M.IT.<br /><strong
+          >Mata Kuliah:</strong
+        >
+        Algoritma dan Pemrograman<br /><strong>Pekan:</strong>
+        Sebelas<br /><strong>Program Studi:</strong>
+        D4 Manajemen Informasi Kesehatan, Sekolah Vokasi UGM
+      </p>
+      <hr />
+      <h2>Capaian Pembelajaran</h2>
+      <p>Setelah menyelesaikan modul ini, mahasiswa diharapkan mampu:</p>
+      <h3>1. Memahami Pentingnya Automasi Dokumen dalam Kesehatan</h3>
+      <ul>
+        <li>Menjelaskan tantangan pengelolaan dokumen manual di rumah sakit</li>
+        <li>Memahami workflow automasi dokumen</li>
+        <li>
+          Mengidentifikasi use cases automasi dokumen dalam manajemen informasi
+          kesehatan
+        </li>
+      </ul>
+      <h3>2. Menggunakan openpyxl untuk Excel Automation</h3>
+      <ul>
+        <li>Membaca dan menulis file Excel (.xlsx)</li>
+        <li>Memanipulasi data dalam worksheet</li>
+        <li>Melakukan filtering dan kalkulasi otomatis</li>
+        <li>Formatting cells dan membuat summary tables</li>
+      </ul>
+      <h3>3. Menggunakan python-docx untuk Word Automation</h3>
+      <ul>
+        <li>Membaca dan mengekstrak konten dari dokumen Word</li>
+        <li>Membuat dokumen Word baru dengan formatting</li>
+        <li>Menggunakan template untuk mail merge</li>
+        <li>Generate dokumen bulk otomatis</li>
+      </ul>
+      <h3>4. Menggunakan PyPDF2/pdfplumber untuk PDF Processing</h3>
+      <ul>
+        <li>Membaca dan mengekstrak text dari PDF</li>
+        <li>Mengekstrak tabel dari PDF</li>
+        <li>Handle multi-page PDF documents</li>
+        <li>Convert PDF data ke format lain (Excel, CSV)</li>
+      </ul>
+      <h3>5. Mengintegrasikan Multiple Libraries untuk Workflow Lengkap</h3>
+      <ul>
+        <li>Membuat pipeline: PDF → Process → Excel</li>
+        <li>Membuat pipeline: Excel → Process → Word</li>
+        <li>Automasi end-to-end document processing</li>
+        <li>Error handling dan data validation</li>
+      </ul>
+      <hr />
+      <h2>Pengantar: Mengapa Document Automation Penting?</h2>
+      <p>
+        Dalam dunia manajemen informasi kesehatan, dokumen adalah inti dari
+        operasional sehari-hari. Bayangkan Anda bekerja di rumah sakit yang
+        harus:
+      </p>
+      <ul>
+        <li>
+          Memproses <strong>100+ form pendaftaran pasien</strong> setiap hari
+        </li>
+        <li>
+          Mengekstrak data dari
+          <strong>puluhan PDF hasil laboratorium</strong> dari berbagai lab
+          partner
+        </li>
+        <li>
+          Membuat <strong>ratusan surat keterangan sakit</strong> untuk pasien
+          rawat jalan
+        </li>
+        <li>
+          Menyusun <strong>laporan bulanan</strong> dengan data dari 10+ file
+          Excel berbeda
+        </li>
+        <li>
+          Generate <strong>surat rujukan</strong> untuk pasien yang perlu ke RS
+          lain
+        </li>
+      </ul>
+      <p>Melakukan semua ini <strong>secara manual</strong> akan:</p>
+      <ul>
+        <li>❌ Memakan waktu berjam-jam</li>
+        <li>❌ Rawan human error (salah ketik, salah copy-paste)</li>
+        <li>❌ Tidak konsisten (format berbeda-beda)</li>
+        <li>❌ Sulit di-scale (bagaimana kalau pasien 2x lipat?)</li>
+      </ul>
+      <p>
+        <strong>Document automation dengan Python</strong> menyediakan solusi:
+      </p>
+      <ul>
+        <li>✅ Proses 100 dokumen dalam hitungan menit</li>
+        <li>✅ Akurasi 100% (no typo, no copy-paste error)</li>
+        <li>✅ Format konsisten dan professional</li>
+        <li>✅ Easily scalable untuk volume besar</li>
+        <li>✅ Staff bisa fokus ke tugas yang lebih penting</li>
+      </ul>
+      <h3>Library yang Akan Dipelajari</h3>
+      <ol>
+        <li><strong>openpyxl</strong> - Excel automation untuk data tabular</li>
+        <li>
+          <strong>python-docx</strong> - Word automation untuk dokumen naratif
+        </li>
+        <li>
+          <strong>PyPDF2 / pdfplumber</strong> - PDF processing untuk ekstraksi
+          data
+        </li>
+      </ol>
+      <p>
+        Skill ini sangat krusial karena hampir semua sistem informasi kesehatan
+        masih menggunakan Excel untuk data exchange, Word untuk dokumentasi, dan
+        PDF untuk laporan final.
+      </p>
+      <hr />
+      <h2>1. openpyxl: Excel Automation</h2>
+      <h3>1.1 Installation dan Import</h3>
+      <pre><code class="language-python"># Installation
+# pip install openpyxl
+
+import openpyxl
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+
+print(&quot;openpyxl berhasil diimport!&quot;)
+print(f&quot;Version: {openpyxl.__version__}&quot;)
+</code></pre>
+      <h3>1.2 Reading Excel Files</h3>
+      <p>
+        <strong>Scenario:</strong> Baca data pasien dari Excel untuk processing
+      </p>
+      <pre><code class="language-python">print(&quot;=== READING EXCEL FILES ===&quot;)
+
+# Create sample Excel file first
+wb = Workbook()
+ws = wb.active
+ws.title = &quot;Data Pasien&quot;
+
+# Headers
+headers = [&quot;No. RM&quot;, &quot;Nama&quot;, &quot;Umur&quot;, &quot;Gender&quot;, &quot;Diagnosa&quot;, &quot;Biaya&quot;]
+ws.append(headers)
+
+# Sample data
+patients = [
+    [&quot;RM-001&quot;, &quot;Ahmad Rizky&quot;, 28, &quot;L&quot;, &quot;Diabetes Mellitus&quot;, 750000],
+    [&quot;RM-002&quot;, &quot;Sari Dewi&quot;, 35, &quot;P&quot;, &quot;Hipertensi&quot;, 450000],
+    [&quot;RM-003&quot;, &quot;Budi Santoso&quot;, 42, &quot;L&quot;, &quot;Gastritis&quot;, 350000],
+    [&quot;RM-004&quot;, &quot;Nina Wulan&quot;, 29, &quot;P&quot;, &quot;Anemia&quot;, 500000],
+    [&quot;RM-005&quot;, &quot;Eko Prasetyo&quot;, 38, &quot;L&quot;, &quot;Diabetes Mellitus&quot;, 800000]
+]
+
+for patient in patients:
+    ws.append(patient)
+
+wb.save(&quot;data_pasien.xlsx&quot;)
+print(&quot;File data_pasien.xlsx berhasil dibuat&quot;)
+
+# Now read the file
+print(&quot;\n=== MEMBACA FILE EXCEL ===&quot;)
+wb = load_workbook(&quot;data_pasien.xlsx&quot;)
+ws = wb.active
+
+print(f&quot;Worksheet name: {ws.title}&quot;)
+print(f&quot;Dimensions: {ws.dimensions}&quot;)
+print(f&quot;Max row: {ws.max_row}&quot;)
+print(f&quot;Max column: {ws.max_column}&quot;)
+
+# Read all data
+print(&quot;\nSemua data:&quot;)
+for row in ws.iter_rows(min_row=1, values_only=True):
+    print(row)
+</code></pre>
+      <h3>1.3 Accessing Specific Cells</h3>
+      <pre><code class="language-python">print(&quot;\n=== ACCESSING CELLS ===&quot;)
+
+wb = load_workbook(&quot;data_pasien.xlsx&quot;)
+ws = wb.active
+
+# Access by cell reference
+print(f&quot;Cell A1: {ws[&#39;A1&#39;].value}&quot;)
+print(f&quot;Cell B2: {ws[&#39;B2&#39;].value}&quot;)
+
+# Access by row and column
+print(f&quot;Cell (1,1): {ws.cell(row=1, column=1).value}&quot;)
+print(f&quot;Cell (2,3): {ws.cell(row=2, column=3).value}&quot;)
+
+# Read specific row
+print(&quot;\nData pasien pertama:&quot;)
+for col in range(1, 7):
+    cell_value = ws.cell(row=2, column=col).value
+    print(f&quot;  Column {col}: {cell_value}&quot;)
+
+# Read specific column
+print(&quot;\nSemua nama pasien:&quot;)
+for row in range(2, ws.max_row + 1):
+    nama = ws.cell(row=row, column=2).value
+    print(f&quot;  {nama}&quot;)
+</code></pre>
+      <h3>1.4 Filtering and Processing Data</h3>
+      <pre><code class="language-python">print(&quot;\n=== FILTERING DATA ===&quot;)
+
+wb = load_workbook(&quot;data_pasien.xlsx&quot;)
+ws = wb.active
+
+# Filter pasien diabetes
+print(&quot;Pasien dengan Diabetes:&quot;)
+for row in range(2, ws.max_row + 1):
+    diagnosa = ws.cell(row=row, column=5).value
+    if &quot;Diabetes&quot; in diagnosa:
+        no_rm = ws.cell(row=row, column=1).value
+        nama = ws.cell(row=row, column=2).value
+        biaya = ws.cell(row=row, column=6).value
+        print(f&quot;  {no_rm} - {nama} - Rp {biaya:,}&quot;)
+
+# Filter by age
+print(&quot;\nPasien umur &gt; 35:&quot;)
+for row in range(2, ws.max_row + 1):
+    umur = ws.cell(row=row, column=3).value
+    if umur &gt; 35:
+        nama = ws.cell(row=row, column=2).value
+        print(f&quot;  {nama} - {umur} tahun&quot;)
+
+# Calculate total
+print(&quot;\n=== KALKULASI ===&quot;)
+total_biaya = 0
+for row in range(2, ws.max_row + 1):
+    biaya = ws.cell(row=row, column=6).value
+    total_biaya += biaya
+
+rata_rata = total_biaya / (ws.max_row - 1)
+print(f&quot;Total biaya: Rp {total_biaya:,}&quot;)
+print(f&quot;Rata-rata biaya: Rp {rata_rata:,.0f}&quot;)
+</code></pre>
+      <h3>1.5 Writing to Excel</h3>
+      <pre><code class="language-python">print(&quot;\n=== WRITING TO EXCEL ===&quot;)
+
+# Create new workbook
+wb = Workbook()
+ws = wb.active
+ws.title = &quot;Laporan Diabetes&quot;
+
+# Write headers
+ws.append([&quot;No. RM&quot;, &quot;Nama&quot;, &quot;Umur&quot;, &quot;Biaya&quot;, &quot;Kategori&quot;])
+
+# Read from original file and filter
+wb_source = load_workbook(&quot;data_pasien.xlsx&quot;)
+ws_source = wb_source.active
+
+for row in range(2, ws_source.max_row + 1):
+    diagnosa = ws_source.cell(row=row, column=5).value
+    if &quot;Diabetes&quot; in diagnosa:
+        no_rm = ws_source.cell(row=row, column=1).value
+        nama = ws_source.cell(row=row, column=2).value
+        umur = ws_source.cell(row=row, column=3).value
+        biaya = ws_source.cell(row=row, column=6).value
+        
+        # Add category
+        kategori = &quot;Mahal&quot; if biaya &gt; 700000 else &quot;Normal&quot;
+        
+        ws.append([no_rm, nama, umur, biaya, kategori])
+
+wb.save(&quot;laporan_diabetes.xlsx&quot;)
+print(&quot;File laporan_diabetes.xlsx berhasil dibuat&quot;)
+</code></pre>
+      <h3>1.6 Formatting Cells</h3>
+      <pre><code class="language-python">print(&quot;\n=== FORMATTING CELLS ===&quot;)
+
+wb = load_workbook(&quot;laporan_diabetes.xlsx&quot;)
+ws = wb.active
+
+# Format header
+header_font = Font(bold=True, color=&quot;FFFFFF&quot;, size=12)
+header_fill = PatternFill(start_color=&quot;4472C4&quot;, end_color=&quot;4472C4&quot;, fill_type=&quot;solid&quot;)
+header_alignment = Alignment(horizontal=&quot;center&quot;, vertical=&quot;center&quot;)
+
+for cell in ws[1]:
+    cell.font = header_font
+    cell.fill = header_fill
+    cell.alignment = header_alignment
+
+# Format biaya column
+for row in range(2, ws.max_row + 1):
+    cell = ws.cell(row=row, column=4)
+    cell.number_format = &#39;Rp #,##0&#39;
+
+# Auto-adjust column width
+for column in ws.columns:
+    max_length = 0
+    column_letter = column[0].column_letter
+    for cell in column:
+        try:
+            if len(str(cell.value)) &gt; max_length:
+                max_length = len(str(cell.value))
+        except:
+            pass
+    adjusted_width = min(max_length + 2, 50)
+    ws.column_dimensions[column_letter].width = adjusted_width
+
+wb.save(&quot;laporan_diabetes_formatted.xlsx&quot;)
+print(&quot;File formatted berhasil dibuat&quot;)
+</code></pre>
+      <h3>1.7 Working with Multiple Sheets</h3>
+      <pre><code class="language-python">print(&quot;\n=== MULTIPLE SHEETS ===&quot;)
+
+wb = Workbook()
+
+# Create sheets for different diagnoses
+ws_diabetes = wb.active
+ws_diabetes.title = &quot;Diabetes&quot;
+
+ws_hipertensi = wb.create_sheet(&quot;Hipertensi&quot;)
+ws_lainnya = wb.create_sheet(&quot;Lainnya&quot;)
+
+# Add headers to all sheets
+headers = [&quot;No. RM&quot;, &quot;Nama&quot;, &quot;Umur&quot;, &quot;Gender&quot;, &quot;Biaya&quot;]
+ws_diabetes.append(headers)
+ws_hipertensi.append(headers)
+ws_lainnya.append(headers)
+
+# Read and distribute data
+wb_source = load_workbook(&quot;data_pasien.xlsx&quot;)
+ws_source = wb_source.active
+
+for row in range(2, ws_source.max_row + 1):
+    no_rm = ws_source.cell(row=row, column=1).value
+    nama = ws_source.cell(row=row, column=2).value
+    umur = ws_source.cell(row=row, column=3).value
+    gender = ws_source.cell(row=row, column=4).value
+    diagnosa = ws_source.cell(row=row, column=5).value
+    biaya = ws_source.cell(row=row, column=6).value
+    
+    row_data = [no_rm, nama, umur, gender, biaya]
+    
+    if &quot;Diabetes&quot; in diagnosa:
+        ws_diabetes.append(row_data)
+    elif &quot;Hipertensi&quot; in diagnosa:
+        ws_hipertensi.append(row_data)
+    else:
+        ws_lainnya.append(row_data)
+
+wb.save(&quot;laporan_per_diagnosa.xlsx&quot;)
+print(&quot;File dengan multiple sheets berhasil dibuat&quot;)
+print(f&quot;Sheet names: {wb.sheetnames}&quot;)
+</code></pre>
+      <hr />
+      <h2>2. python-docx: Word Automation</h2>
+      <h3>2.1 Installation dan Import</h3>
+      <pre><code class="language-python"># Installation
+# pip install python-docx
+
+from docx import Document
+from docx.shared import Inches, Pt, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+print(&quot;python-docx berhasil diimport!&quot;)
+</code></pre>
+      <h3>2.2 Reading Word Documents</h3>
+      <pre><code class="language-python">print(&quot;=== READING WORD DOCUMENTS ===&quot;)
+
+# Create sample document first
+doc = Document()
+doc.add_heading(&#39;Rekam Medis Pasien&#39;, 0)
+
+doc.add_heading(&#39;Data Pasien&#39;, level=1)
+doc.add_paragraph(&#39;No. RM: RM-2024-001&#39;)
+doc.add_paragraph(&#39;Nama: Ahmad Rizky Pratama&#39;)
+doc.add_paragraph(&#39;Umur: 28 tahun&#39;)
+doc.add_paragraph(&#39;Gender: Laki-laki&#39;)
+
+doc.add_heading(&#39;Diagnosa&#39;, level=1)
+doc.add_paragraph(&#39;Diabetes Mellitus Type 2&#39;)
+
+doc.add_heading(&#39;Terapi&#39;, level=1)
+doc.add_paragraph(&#39;1. Metformin 500mg 2x sehari&#39;)
+doc.add_paragraph(&#39;2. Diet rendah gula&#39;)
+doc.add_paragraph(&#39;3. Olahraga teratur 30 menit/hari&#39;)
+
+doc.save(&#39;rekam_medis.docx&#39;)
+print(&quot;File rekam_medis.docx berhasil dibuat&quot;)
+
+# Read the document
+print(&quot;\n=== MEMBACA DOKUMEN ===&quot;)
+doc = Document(&#39;rekam_medis.docx&#39;)
+
+print(&quot;Semua paragraphs:&quot;)
+for i, para in enumerate(doc.paragraphs):
+    if para.text:
+        print(f&quot;{i+1}. {para.text}&quot;)
+
+# Extract specific information
+print(&quot;\n=== EKSTRAK INFORMASI ===&quot;)
+for para in doc.paragraphs:
+    if &quot;No. RM:&quot; in para.text:
+        no_rm = para.text.split(&quot;:&quot;)[1].strip()
+        print(f&quot;Nomor RM: {no_rm}&quot;)
+    if &quot;Nama:&quot; in para.text:
+        nama = para.text.split(&quot;:&quot;)[1].strip()
+        print(f&quot;Nama Pasien: {nama}&quot;)
+    if &quot;Diagnosa&quot; in para.text and para.style.name.startswith(&#39;Heading&#39;):
+        # Get next paragraph after heading
+        idx = doc.paragraphs.index(para)
+        if idx + 1 &lt; len(doc.paragraphs):
+            diagnosa = doc.paragraphs[idx + 1].text
+            print(f&quot;Diagnosa: {diagnosa}&quot;)
+</code></pre>
+      <h3>2.3 Creating Word Documents</h3>
+      <pre><code class="language-python">print(&quot;\n=== CREATING WORD DOCUMENTS ===&quot;)
+
+doc = Document()
+
+# Add title
+title = doc.add_heading(&#39;SURAT KETERANGAN SAKIT&#39;, 0)
+title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+# Add content
+doc.add_paragraph()  # Empty line
+doc.add_paragraph(&#39;Yang bertanda tangan di bawah ini:&#39;)
+
+# Doctor info
+doc.add_paragraph(&#39;Nama\t\t: dr. Sari Kusuma, Sp.PD&#39;)
+doc.add_paragraph(&#39;SIP\t\t: 503/SIP/2023&#39;)
+doc.add_paragraph(&#39;Institusi\t: RS Sardjito Yogyakarta&#39;)
+
+doc.add_paragraph()  # Empty line
+doc.add_paragraph(&#39;Menerangkan bahwa:&#39;)
+
+# Patient info
+doc.add_paragraph(&#39;Nama\t\t: Ahmad Rizky Pratama&#39;)
+doc.add_paragraph(&#39;Umur\t\t: 28 tahun&#39;)
+doc.add_paragraph(&#39;Pekerjaan\t: Karyawan Swasta&#39;)
+doc.add_paragraph(&#39;Alamat\t\t: Jl. Kaliurang Km 5, Yogyakarta&#39;)
+
+doc.add_paragraph()
+doc.add_paragraph(
+    &#39;Setelah dilakukan pemeriksaan pada tanggal 16 Januari 2024, &#39;
+    &#39;yang bersangkutan dinyatakan sakit dan memerlukan istirahat &#39;
+    &#39;selama 3 (tiga) hari terhitung dari tanggal 16-18 Januari 2024.&#39;
+)
+
+doc.add_paragraph()
+doc.add_paragraph(&#39;Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.&#39;)
+
+# Signature section
+doc.add_paragraph()
+doc.add_paragraph(&#39;Yogyakarta, 16 Januari 2024&#39;)
+doc.add_paragraph(&#39;Dokter Pemeriksa,&#39;)
+doc.add_paragraph()
+doc.add_paragraph()
+doc.add_paragraph(&#39;dr. Sari Kusuma, Sp.PD&#39;)
+
+doc.save(&#39;surat_keterangan_sakit.docx&#39;)
+print(&quot;Surat keterangan sakit berhasil dibuat&quot;)
+</code></pre>
+      <h3>2.4 Formatting Text</h3>
+      <pre><code class="language-python">print(&quot;\n=== FORMATTING TEXT ===&quot;)
+
+doc = Document()
+
+# Title with formatting
+title = doc.add_heading(&#39;LAPORAN PEMERIKSAAN PASIEN&#39;, 0)
+title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+# Formatted paragraphs
+doc.add_paragraph()
+
+# Bold text
+p = doc.add_paragraph()
+p.add_run(&#39;Nomor Rekam Medis: &#39;).bold = True
+p.add_run(&#39;RM-2024-001&#39;)
+
+# Different colors
+p = doc.add_paragraph()
+run = p.add_run(&#39;Status: &#39;)
+run.bold = True
+run = p.add_run(&#39;URGENT&#39;)
+run.font.color.rgb = RGBColor(255, 0, 0)  # Red
+run.bold = True
+
+# Different font size
+p = doc.add_paragraph()
+run = p.add_run(&#39;Diagnosis: &#39;)
+run.font.size = Pt(12)
+run.bold = True
+run = p.add_run(&#39;Diabetes Mellitus Type 2&#39;)
+run.font.size = Pt(12)
+
+# Italic text
+p = doc.add_paragraph()
+run = p.add_run(&#39;Catatan: Pasien memerlukan kontrol rutin setiap 2 minggu&#39;)
+run.italic = True
+run.font.color.rgb = RGBColor(128, 128, 128)  # Gray
+
+doc.save(&#39;laporan_formatted.docx&#39;)
+print(&quot;Dokumen dengan formatting berhasil dibuat&quot;)
+</code></pre>
+      <h3>2.5 Working with Tables</h3>
+      <pre><code class="language-python">print(&quot;\n=== WORKING WITH TABLES ===&quot;)
+
+doc = Document()
+doc.add_heading(&#39;Data Pasien Rawat Jalan&#39;, 0)
+
+# Create table
+table = doc.add_table(rows=1, cols=5)
+table.style = &#39;Light Grid Accent 1&#39;
+
+# Header row
+hdr_cells = table.rows[0].cells
+hdr_cells[0].text = &#39;No. RM&#39;
+hdr_cells[1].text = &#39;Nama&#39;
+hdr_cells[2].text = &#39;Umur&#39;
+hdr_cells[3].text = &#39;Diagnosa&#39;
+hdr_cells[4].text = &#39;Biaya&#39;
+
+# Data rows
+patients = [
+    [&#39;RM-001&#39;, &#39;Ahmad Rizky&#39;, &#39;28&#39;, &#39;Diabetes&#39;, &#39;Rp 750.000&#39;],
+    [&#39;RM-002&#39;, &#39;Sari Dewi&#39;, &#39;35&#39;, &#39;Hipertensi&#39;, &#39;Rp 450.000&#39;],
+    [&#39;RM-003&#39;, &#39;Budi Santoso&#39;, &#39;42&#39;, &#39;Gastritis&#39;, &#39;Rp 350.000&#39;]
+]
+
+for patient in patients:
+    row_cells = table.add_row().cells
+    for i, value in enumerate(patient):
+        row_cells[i].text = value
+
+doc.save(&#39;data_pasien_table.docx&#39;)
+print(&quot;Dokumen dengan tabel berhasil dibuat&quot;)
+</code></pre>
+      <h3>2.6 Template-based Document Generation</h3>
+      <pre><code class="language-python">print(&quot;\n=== TEMPLATE-BASED GENERATION ===&quot;)
+
+# Function to replace placeholders
+def generate_certificate(template_path, output_path, data):
+    doc = Document(template_path)
+    
+    # Replace in paragraphs
+    for para in doc.paragraphs:
+        for key, value in data.items():
+            if f&quot;{{{{{key}}}}}&quot; in para.text:
+                para.text = para.text.replace(f&quot;{{{{{key}}}}}&quot;, str(value))
+    
+    # Replace in tables
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for key, value in data.items():
+                    if f&quot;{{{{{key}}}}}&quot; in cell.text:
+                        cell.text = cell.text.replace(f&quot;{{{{{key}}}}}&quot;, str(value))
+    
+    doc.save(output_path)
+    print(f&quot;Dokumen {output_path} berhasil dibuat&quot;)
+
+# Create template first
+doc = Document()
+doc.add_heading(&#39;SURAT RUJUKAN&#39;, 0)
+doc.add_paragraph()
+doc.add_paragraph(&#39;Kepada Yth.&#39;)
+doc.add_paragraph(&#39;{{RUMAH_SAKIT_TUJUAN}}&#39;)
+doc.add_paragraph()
+doc.add_paragraph(&#39;Dengan hormat,&#39;)
+doc.add_paragraph()
+doc.add_paragraph(&#39;Mohon pemeriksaan lebih lanjut untuk pasien:&#39;)
+doc.add_paragraph(&#39;Nama\t\t: {{NAMA_PASIEN}}&#39;)
+doc.add_paragraph(&#39;Umur\t\t: {{UMUR}} tahun&#39;)
+doc.add_paragraph(&#39;Diagnosa\t: {{DIAGNOSA}}&#39;)
+doc.add_paragraph()
+doc.add_paragraph(&#39;Terima kasih atas kerjasamanya.&#39;)
+doc.add_paragraph()
+doc.add_paragraph(&#39;Hormat kami,&#39;)
+doc.add_paragraph(&#39;{{NAMA_DOKTER}}&#39;)
+
+doc.save(&#39;template_rujukan.docx&#39;)
+print(&quot;Template rujukan berhasil dibuat&quot;)
+
+# Generate documents from template
+patients_data = [
+    {
+        &#39;NAMA_PASIEN&#39;: &#39;Ahmad Rizky&#39;,
+        &#39;UMUR&#39;: 28,
+        &#39;DIAGNOSA&#39;: &#39;Diabetes Mellitus Type 2&#39;,
+        &#39;RUMAH_SAKIT_TUJUAN&#39;: &#39;RS Bethesda&#39;,
+        &#39;NAMA_DOKTER&#39;: &#39;dr. Sari Kusuma, Sp.PD&#39;
+    },
+    {
+        &#39;NAMA_PASIEN&#39;: &#39;Budi Santoso&#39;,
+        &#39;UMUR&#39;: 42,
+        &#39;DIAGNOSA&#39;: &#39;Hipertensi Grade 2&#39;,
+        &#39;RUMAH_SAKIT_TUJUAN&#39;: &#39;RS Panti Rapih&#39;,
+        &#39;NAMA_DOKTER&#39;: &#39;dr. Sari Kusuma, Sp.PD&#39;
+    }
+]
+
+for i, patient_data in enumerate(patients_data):
+    generate_certificate(
+        &#39;template_rujukan.docx&#39;,
+        f&#39;surat_rujukan_{i+1}.docx&#39;,
+        patient_data
+    )
+
+print(f&quot;\nTotal {len(patients_data)} surat rujukan berhasil dibuat!&quot;)
+</code></pre>
+      <hr />
+      <h2>3. PyPDF2 &amp; pdfplumber: PDF Processing</h2>
+      <h3>3.1 Installation dan Import</h3>
+      <pre><code class="language-python"># Installation
+# pip install PyPDF2 pdfplumber
+
+import PyPDF2
+import pdfplumber
+
+print(&quot;PyPDF2 dan pdfplumber berhasil diimport!&quot;)
+</code></pre>
+      <h3>3.2 Reading PDF with PyPDF2</h3>
+      <pre><code class="language-python">print(&quot;=== READING PDF WITH PYPDF2 ===&quot;)
+
+# Note: We&#39;ll create a simple text-based example
+# In real scenario, you would have actual PDF files
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+
+# Create sample PDF first (requires reportlab)
+# pip install reportlab
+
+def create_sample_pdf():
+    c = canvas.Canvas(&quot;hasil_lab.pdf&quot;, pagesize=letter)
+    
+    # Title
+    c.setFont(&quot;Helvetica-Bold&quot;, 16)
+    c.drawString(100, 750, &quot;HASIL PEMERIKSAAN LABORATORIUM&quot;)
+    
+    # Patient info
+    c.setFont(&quot;Helvetica&quot;, 12)
+    c.drawString(100, 700, &quot;Nama Pasien: Ahmad Rizky Pratama&quot;)
+    c.drawString(100, 680, &quot;No. RM: RM-2024-001&quot;)
+    c.drawString(100, 660, &quot;Tanggal: 16 Januari 2024&quot;)
+    
+    # Lab results
+    c.drawString(100, 620, &quot;HASIL PEMERIKSAAN:&quot;)
+    c.drawString(120, 600, &quot;Glukosa Puasa: 180 mg/dL (Tinggi)&quot;)
+    c.drawString(120, 580, &quot;Kolesterol Total: 250 mg/dL (Tinggi)&quot;)
+    c.drawString(120, 560, &quot;Trigliserida: 200 mg/dL (Normal)&quot;)
+    c.drawString(120, 540, &quot;HDL: 45 mg/dL (Normal)&quot;)
+    c.drawString(120, 520, &quot;LDL: 160 mg/dL (Tinggi)&quot;)
+    
+    c.save()
+    print(&quot;Sample PDF created: hasil_lab.pdf&quot;)
+
+create_sample_pdf()
+
+# Read PDF with PyPDF2
+print(&quot;\n=== READING PDF ===&quot;)
+with open(&quot;hasil_lab.pdf&quot;, &quot;rb&quot;) as file:
+    pdf_reader = PyPDF2.PdfReader(file)
+    
+    print(f&quot;Number of pages: {len(pdf_reader.pages)}&quot;)
+    
+    # Extract text from first page
+    page = pdf_reader.pages[0]
+    text = page.extract_text()
+    
+    print(&quot;\nExtracted text:&quot;)
+    print(text)
+</code></pre>
+      <h3>3.3 Reading PDF with pdfplumber (Better for Tables)</h3>
+      <pre><code class="language-python">print(&quot;\n=== READING PDF WITH PDFPLUMBER ===&quot;)
+
+# pdfplumber is better for extracting tables
+with pdfplumber.open(&quot;hasil_lab.pdf&quot;) as pdf:
+    first_page = pdf.pages[0]
+    
+    # Extract text
+    text = first_page.extract_text()
+    print(&quot;Extracted text:&quot;)
+    print(text)
+    
+    # Extract tables (if any)
+    tables = first_page.extract_tables()
+    if tables:
+        print(&quot;\nTables found:&quot;)
+        for table in tables:
+            print(table)
+    else:
+        print(&quot;\nNo tables found in this PDF&quot;)
+</code></pre>
+      <h3>3.4 Parsing Lab Results from PDF</h3>
+      <pre><code class="language-python">print(&quot;\n=== PARSING LAB RESULTS ===&quot;)
+
+def parse_lab_results(pdf_path):
+    &quot;&quot;&quot;Extract lab results from PDF&quot;&quot;&quot;
+    results = {}
+    
+    with pdfplumber.open(pdf_path) as pdf:
+        text = pdf.pages[0].extract_text()
+        
+        # Parse patient info
+        for line in text.split(&#39;\n&#39;):
+            if &quot;Nama Pasien:&quot; in line:
+                results[&#39;nama&#39;] = line.split(&quot;:&quot;)[1].strip()
+            elif &quot;No. RM:&quot; in line:
+                results[&#39;no_rm&#39;] = line.split(&quot;:&quot;)[1].strip()
+            elif &quot;Tanggal:&quot; in line:
+                results[&#39;tanggal&#39;] = line.split(&quot;:&quot;)[1].strip()
+            elif &quot;Glukosa&quot; in line:
+                # Extract numeric value
+                parts = line.split(&quot;:&quot;)
+                if len(parts) &gt; 1:
+                    value_part = parts[1].strip().split()[0]
+                    results[&#39;glukosa&#39;] = value_part
+            elif &quot;Kolesterol Total&quot; in line:
+                parts = line.split(&quot;:&quot;)
+                if len(parts) &gt; 1:
+                    value_part = parts[1].strip().split()[0]
+                    results[&#39;kolesterol&#39;] = value_part
+    
+    return results
+
+# Parse the PDF
+lab_data = parse_lab_results(&quot;hasil_lab.pdf&quot;)
+print(&quot;\nParsed lab results:&quot;)
+for key, value in lab_data.items():
+    print(f&quot;{key}: {value}&quot;)
+</code></pre>
+      <h3>3.5 PDF to Excel Conversion</h3>
+      <pre><code class="language-python">print(&quot;\n=== PDF TO EXCEL CONVERSION ===&quot;)
+
+from openpyxl import Workbook
+
+def pdf_to_excel(pdf_path, excel_path):
+    &quot;&quot;&quot;Convert lab results from PDF to Excel&quot;&quot;&quot;
+    
+    # Parse PDF
+    lab_data = parse_lab_results(pdf_path)
+    
+    # Create Excel
+    wb = Workbook()
+    ws = wb.active
+    ws.title = &quot;Hasil Lab&quot;
+    
+    # Headers
+    ws.append([&quot;Field&quot;, &quot;Value&quot;])
+    
+    # Data
+    for key, value in lab_data.items():
+        ws.append([key.title(), value])
+    
+    # Format
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+    
+    wb.save(excel_path)
+    print(f&quot;Excel file created: {excel_path}&quot;)
+
+# Convert
+pdf_to_excel(&quot;hasil_lab.pdf&quot;, &quot;hasil_lab_converted.xlsx&quot;)
+</code></pre>
+      <h2>3.6 Batch PDF Processing</h2>
+      <pre><code class="language-python">print(&quot;\n=== BATCH PDF PROCESSING ===&quot;)
+
+import os
+from openpyxl import Workbook
+
+def batch_process_pdfs(pdf_folder, output_excel):
+    &quot;&quot;&quot;Process multiple PDF files and consolidate to Excel&quot;&quot;&quot;
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = &quot;All Lab Results&quot;
+
+    # Headers
+    ws.append([&quot;No. RM&quot;, &quot;Nama&quot;, &quot;Tanggal&quot;, &quot;Glukosa&quot;, &quot;Kolesterol&quot;])
+
+    # Process each PDF
+    pdf_files = [f for f in os.listdir(pdf_folder) if f.endswith(&#39;.pdf&#39;)]
+
+    for pdf_file in pdf_files:
+        pdf_path = os.path.join(pdf_folder, pdf_file)
+
+        try:
+            lab_data = parse_lab_results(pdf_path)
+            ws.append([
+                lab_data.get(&#39;no_rm&#39;, &#39;&#39;),
+                lab_data.get(&#39;nama&#39;, &#39;&#39;),
+                lab_data.get(&#39;tanggal&#39;, &#39;&#39;),
+                lab_data.get(&#39;glukosa&#39;, &#39;&#39;),
+                lab_data.get(&#39;kolesterol&#39;, &#39;&#39;)
+            ])
+            print(f&quot;Processed: {pdf_file}&quot;)
+        except Exception as e:
+            print(f&quot;Error processing {pdf_file}: {e}&quot;)
+
+    # Format headers
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill(start_color=&quot;4472C4&quot;, end_color=&quot;4472C4&quot;, fill_type=&quot;solid&quot;)
+        cell.font = Font(bold=True, color=&quot;FFFFFF&quot;)
+
+    wb.save(output_excel)
+    print(f&quot;\nAll results saved to: {output_excel}&quot;)
+    print(f&quot;Total files processed: {len(pdf_files)}&quot;)
+
+# Example usage (assuming you have multiple PDFs in a folder)
+# batch_process_pdfs(&quot;lab_results&quot;, &quot;all_lab_results.xlsx&quot;)
+print(&quot;Batch processing function ready to use!&quot;)
+</code></pre>
+      <hr />
+      <h2>4. Integration: Complete Workflows</h2>
+      <h3>4.1 Workflow 1: Excel → Filter → Word Report</h3>
+      <p>
+        <strong>Scenario:</strong> Baca data pasien dari Excel, filter yang
+        berisiko tinggi, generate laporan Word
+      </p>
+      <pre><code class="language-python">print(&quot;\n=== WORKFLOW 1: EXCEL TO WORD REPORT ===&quot;)
+
+from openpyxl import load_workbook
+from docx import Document
+from datetime import datetime
+
+def generate_high_risk_report(excel_path, output_docx):
+    &quot;&quot;&quot;Generate Word report for high-risk patients from Excel&quot;&quot;&quot;
+
+    # Read Excel
+    wb = load_workbook(excel_path)
+    ws = wb.active
+
+    # Create Word document
+    doc = Document()
+    doc.add_heading(&#39;LAPORAN PASIEN RISIKO TINGGI&#39;, 0)
+
+    # Add date
+    doc.add_paragraph(f&#39;Tanggal: {datetime.now().strftime(&quot;%d %B %Y&quot;)}&#39;)
+    doc.add_paragraph()
+
+    # Filter and collect high-risk patients
+    high_risk_patients = []
+
+    for row in range(2, ws.max_row + 1):
+        umur = ws.cell(row=row, column=3).value
+        diagnosa = ws.cell(row=row, column=5).value
+        biaya = ws.cell(row=row, column=6).value
+
+        # High risk criteria: age &gt; 35 OR expensive treatment
+        if umur &gt; 35 or biaya &gt; 600000:
+            patient = {
+                &#39;no_rm&#39;: ws.cell(row=row, column=1).value,
+                &#39;nama&#39;: ws.cell(row=row, column=2).value,
+                &#39;umur&#39;: umur,
+                &#39;gender&#39;: ws.cell(row=row, column=4).value,
+                &#39;diagnosa&#39;: diagnosa,
+                &#39;biaya&#39;: biaya
+            }
+            high_risk_patients.append(patient)
+
+    # Add summary
+    doc.add_heading(&#39;Ringkasan&#39;, level=1)
+    doc.add_paragraph(f&#39;Total pasien risiko tinggi: {len(high_risk_patients)} orang&#39;)
+    doc.add_paragraph()
+
+    # Add table
+    doc.add_heading(&#39;Daftar Pasien&#39;, level=1)
+    table = doc.add_table(rows=1, cols=5)
+    table.style = &#39;Light Grid Accent 1&#39;
+
+    # Headers
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = &#39;No. RM&#39;
+    hdr_cells[1].text = &#39;Nama&#39;
+    hdr_cells[2].text = &#39;Umur&#39;
+    hdr_cells[3].text = &#39;Diagnosa&#39;
+    hdr_cells[4].text = &#39;Biaya&#39;
+
+    # Add patients
+    for patient in high_risk_patients:
+        row_cells = table.add_row().cells
+        row_cells[0].text = patient[&#39;no_rm&#39;]
+        row_cells[1].text = patient[&#39;nama&#39;]
+        row_cells[2].text = str(patient[&#39;umur&#39;])
+        row_cells[3].text = patient[&#39;diagnosa&#39;]
+        row_cells[4].text = f&quot;Rp {patient[&#39;biaya&#39;]:,}&quot;
+
+    # Add recommendations
+    doc.add_paragraph()
+    doc.add_heading(&#39;Rekomendasi&#39;, level=1)
+    doc.add_paragraph(&#39;1. Follow-up intensif untuk pasien di atas 40 tahun&#39;)
+    doc.add_paragraph(&#39;2. Monitoring biaya treatment untuk kasus kompleks&#39;)
+    doc.add_paragraph(&#39;3. Case conference untuk pasien dengan biaya &gt; Rp 700.000&#39;)
+
+    # Save
+    doc.save(output_docx)
+    print(f&quot;Report saved: {output_docx}&quot;)
+    print(f&quot;Total high-risk patients: {len(high_risk_patients)}&quot;)
+
+    return len(high_risk_patients)
+
+# Generate report
+count = generate_high_risk_report(&quot;data_pasien.xlsx&quot;, &quot;laporan_risiko_tinggi.docx&quot;)
+</code></pre>
+      <h3>4.2 Workflow 2: PDF → Parse → Excel → Word</h3>
+      <p>
+        <strong>Scenario:</strong> Extract data dari PDF lab, save ke Excel,
+        generate summary report Word
+      </p>
+      <pre><code class="language-python">print(&quot;\n=== WORKFLOW 2: PDF TO EXCEL TO WORD ===&quot;)
+
+def complete_lab_workflow(pdf_path, excel_path, word_path):
+    &quot;&quot;&quot;Complete workflow: PDF → Excel → Word&quot;&quot;&quot;
+
+    # Step 1: Parse PDF
+    print(&quot;Step 1: Parsing PDF...&quot;)
+    lab_data = parse_lab_results(pdf_path)
+
+    # Step 2: Save to Excel
+    print(&quot;Step 2: Saving to Excel...&quot;)
+    wb = Workbook()
+    ws = wb.active
+    ws.title = &quot;Lab Results&quot;
+
+    ws.append([&quot;Field&quot;, &quot;Value&quot;, &quot;Status&quot;])
+
+    # Add data with status
+    glukosa = int(lab_data.get(&#39;glukosa&#39;, 0))
+    kolesterol = int(lab_data.get(&#39;kolesterol&#39;, 0))
+
+    ws.append([&quot;No. RM&quot;, lab_data.get(&#39;no_rm&#39;, &#39;&#39;), &#39;&#39;])
+    ws.append([&quot;Nama&quot;, lab_data.get(&#39;nama&#39;, &#39;&#39;), &#39;&#39;])
+    ws.append([&quot;Tanggal&quot;, lab_data.get(&#39;tanggal&#39;, &#39;&#39;), &#39;&#39;])
+    ws.append([&quot;Glukosa&quot;, f&quot;{glukosa} mg/dL&quot;,
+               &quot;TINGGI&quot; if glukosa &gt;= 126 else &quot;NORMAL&quot;])
+    ws.append([&quot;Kolesterol&quot;, f&quot;{kolesterol} mg/dL&quot;,
+               &quot;TINGGI&quot; if kolesterol &gt;= 240 else &quot;NORMAL&quot;])
+
+    wb.save(excel_path)
+    print(f&quot;Excel saved: {excel_path}&quot;)
+
+    # Step 3: Generate Word report
+    print(&quot;Step 3: Generating Word report...&quot;)
+    doc = Document()
+    doc.add_heading(&#39;INTERPRETASI HASIL LABORATORIUM&#39;, 0)
+
+    doc.add_paragraph()
+    doc.add_paragraph(f&quot;No. RM: {lab_data.get(&#39;no_rm&#39;, &#39;&#39;)}&quot;)
+    doc.add_paragraph(f&quot;Nama Pasien: {lab_data.get(&#39;nama&#39;, &#39;&#39;)}&quot;)
+    doc.add_paragraph(f&quot;Tanggal Pemeriksaan: {lab_data.get(&#39;tanggal&#39;, &#39;&#39;)}&quot;)
+
+    doc.add_paragraph()
+    doc.add_heading(&#39;Hasil Pemeriksaan&#39;, level=1)
+
+    # Glukosa interpretation
+    p = doc.add_paragraph()
+    p.add_run(&#39;Glukosa Puasa: &#39;).bold = True
+    p.add_run(f&quot;{glukosa} mg/dL &quot;)
+    if glukosa &gt;= 126:
+        run = p.add_run(&#39;(DIABETES)&#39;)
+        run.font.color.rgb = RGBColor(255, 0, 0)
+        run.bold = True
+    elif glukosa &gt;= 100:
+        run = p.add_run(&#39;(PREDIABETES)&#39;)
+        run.font.color.rgb = RGBColor(255, 165, 0)
+        run.bold = True
+    else:
+        run = p.add_run(&#39;(NORMAL)&#39;)
+        run.font.color.rgb = RGBColor(0, 128, 0)
+        run.bold = True
+
+    # Kolesterol interpretation
+    p = doc.add_paragraph()
+    p.add_run(&#39;Kolesterol Total: &#39;).bold = True
+    p.add_run(f&quot;{kolesterol} mg/dL &quot;)
+    if kolesterol &gt;= 240:
+        run = p.add_run(&#39;(TINGGI)&#39;)
+        run.font.color.rgb = RGBColor(255, 0, 0)
+        run.bold = True
+    elif kolesterol &gt;= 200:
+        run = p.add_run(&#39;(BORDERLINE)&#39;)
+        run.font.color.rgb = RGBColor(255, 165, 0)
+        run.bold = True
+    else:
+        run = p.add_run(&#39;(NORMAL)&#39;)
+        run.font.color.rgb = RGBColor(0, 128, 0)
+        run.bold = True
+
+    # Recommendations
+    doc.add_paragraph()
+    doc.add_heading(&#39;Rekomendasi&#39;, level=1)
+
+    if glukosa &gt;= 126 or kolesterol &gt;= 240:
+        doc.add_paragraph(&#39;⚠ PERLU KONSULTASI SEGERA DENGAN DOKTER&#39;)
+        doc.add_paragraph(&#39;• Diet rendah gula dan lemak&#39;)
+        doc.add_paragraph(&#39;• Olahraga teratur minimal 30 menit/hari&#39;)
+        doc.add_paragraph(&#39;• Kontrol rutin setiap 2 minggu&#39;)
+    else:
+        doc.add_paragraph(&#39;✓ Hasil dalam batas normal&#39;)
+        doc.add_paragraph(&#39;• Pertahankan pola hidup sehat&#39;)
+        doc.add_paragraph(&#39;• Kontrol rutin 6 bulan&#39;)
+
+    doc.save(word_path)
+    print(f&quot;Word report saved: {word_path}&quot;)
+
+    print(&quot;\n✓ Complete workflow finished!&quot;)
+
+# Execute complete workflow
+complete_lab_workflow(
+    &quot;hasil_lab.pdf&quot;,
+    &quot;hasil_lab_data.xlsx&quot;,
+    &quot;interpretasi_lab.docx&quot;
+)
+</code></pre>
+      <h3>4.3 Workflow 3: Bulk Certificate Generation</h3>
+      <p>
+        <strong>Scenario:</strong> Generate ratusan surat keterangan sakit dari
+        data Excel
+      </p>
+      <pre><code class="language-python">print(&quot;\n=== WORKFLOW 3: BULK CERTIFICATE GENERATION ===&quot;)
+
+def bulk_generate_certificates(excel_path, template_path, output_folder):
+    &quot;&quot;&quot;Generate certificates for all patients in Excel&quot;&quot;&quot;
+
+    # Create output folder if not exists
+    import os
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    # Read Excel
+    wb = load_workbook(excel_path)
+    ws = wb.active
+
+    # Counter
+    count = 0
+
+    # Process each patient
+    for row in range(2, ws.max_row + 1):
+        patient_data = {
+            &#39;NAMA_PASIEN&#39;: ws.cell(row=row, column=2).value,
+            &#39;UMUR&#39;: ws.cell(row=row, column=3).value,
+            &#39;NO_RM&#39;: ws.cell(row=row, column=1).value,
+            &#39;DIAGNOSA&#39;: ws.cell(row=row, column=5).value,
+            &#39;TANGGAL&#39;: datetime.now().strftime(&quot;%d %B %Y&quot;),
+            &#39;DOKTER&#39;: &#39;dr. Sari Kusuma, Sp.PD&#39;
+        }
+
+        # Create certificate
+        doc = Document()
+        doc.add_heading(&#39;SURAT KETERANGAN SAKIT&#39;, 0).alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+        doc.add_paragraph()
+        doc.add_paragraph(&#39;Yang bertanda tangan di bawah ini:&#39;)
+        doc.add_paragraph(f&#39;Nama\t\t: {patient_data[&quot;DOKTER&quot;]}&#39;)
+        doc.add_paragraph(&#39;Institusi\t: RS Sardjito Yogyakarta&#39;)
+
+        doc.add_paragraph()
+        doc.add_paragraph(&#39;Menerangkan bahwa:&#39;)
+        doc.add_paragraph(f&#39;Nama\t\t: {patient_data[&quot;NAMA_PASIEN&quot;]}&#39;)
+        doc.add_paragraph(f&#39;Umur\t\t: {patient_data[&quot;UMUR&quot;]} tahun&#39;)
+        doc.add_paragraph(f&#39;No. RM\t\t: {patient_data[&quot;NO_RM&quot;]}&#39;)
+
+        doc.add_paragraph()
+        doc.add_paragraph(
+            f&#39;Pasien tersebut didiagnosa {patient_data[&quot;DIAGNOSA&quot;]} &#39;
+            f&#39;dan memerlukan istirahat selama 3 hari.&#39;
+        )
+
+        doc.add_paragraph()
+        doc.add_paragraph(f&#39;{patient_data[&quot;TANGGAL&quot;]}&#39;)
+        doc.add_paragraph(&#39;Dokter Pemeriksa,&#39;)
+        doc.add_paragraph()
+        doc.add_paragraph(patient_data[&quot;DOKTER&quot;])
+
+        # Save with patient name
+        output_file = os.path.join(
+            output_folder,
+            f&quot;Surat_{patient_data[&#39;NO_RM&#39;]}_{patient_data[&#39;NAMA_PASIEN&#39;].replace(&#39; &#39;, &#39;_&#39;)}.docx&quot;
+        )
+        doc.save(output_file)
+
+        count += 1
+        print(f&quot;Generated: {output_file}&quot;)
+
+    print(f&quot;\n✓ Total {count} certificates generated in folder: {output_folder}&quot;)
+    return count
+
+# Generate bulk certificates
+total = bulk_generate_certificates(
+    &quot;data_pasien.xlsx&quot;,
+    &quot;template_surat.docx&quot;,
+    &quot;surat_keterangan&quot;
+)
+</code></pre>
+      <hr />
+      <h2>5. Error Handling dan Best Practices</h2>
+      <h3>5.1 Handling File Errors</h3>
+      <pre><code class="language-python">print(&quot;\n=== ERROR HANDLING ===&quot;)
+
+def safe_read_excel(file_path):
+    &quot;&quot;&quot;Safely read Excel with error handling&quot;&quot;&quot;
+    try:
+        wb = load_workbook(file_path)
+        print(f&quot;✓ Successfully loaded: {file_path}&quot;)
+        return wb
+    except FileNotFoundError:
+        print(f&quot;✗ Error: File {file_path} not found&quot;)
+        return None
+    except PermissionError:
+        print(f&quot;✗ Error: No permission to access {file_path}&quot;)
+        return None
+    except Exception as e:
+        print(f&quot;✗ Error loading file: {e}&quot;)
+        return None
+
+def safe_read_pdf(file_path):
+    &quot;&quot;&quot;Safely read PDF with error handling&quot;&quot;&quot;
+    try:
+        with pdfplumber.open(file_path) as pdf:
+            print(f&quot;✓ Successfully loaded PDF: {file_path}&quot;)
+            return pdf.pages[0].extract_text()
+    except FileNotFoundError:
+        print(f&quot;✗ Error: PDF {file_path} not found&quot;)
+        return None
+    except Exception as e:
+        print(f&quot;✗ Error reading PDF: {e}&quot;)
+        return None
+
+# Test error handling
+wb = safe_read_excel(&quot;data_pasien.xlsx&quot;)
+wb_missing = safe_read_excel(&quot;file_tidak_ada.xlsx&quot;)
+
+text = safe_read_pdf(&quot;hasil_lab.pdf&quot;)
+text_missing = safe_read_pdf(&quot;pdf_tidak_ada.pdf&quot;)
+</code></pre>
+      <h3>5.2 Data Validation</h3>
+      <pre><code class="language-python">print(&quot;\n=== DATA VALIDATION ===&quot;)
+
+def validate_patient_data(data):
+    &quot;&quot;&quot;Validate patient data before processing&quot;&quot;&quot;
+    errors = []
+
+    # Check required fields
+    required_fields = [&#39;no_rm&#39;, &#39;nama&#39;, &#39;umur&#39;]
+    for field in required_fields:
+        if not data.get(field):
+            errors.append(f&quot;Missing required field: {field}&quot;)
+
+    # Validate age
+    try:
+        umur = int(data.get(&#39;umur&#39;, 0))
+        if umur &lt;= 0 or umur &gt; 150:
+            errors.append(&quot;Invalid age: must be between 1-150&quot;)
+    except ValueError:
+        errors.append(&quot;Age must be a number&quot;)
+
+    # Validate No. RM format
+    no_rm = data.get(&#39;no_rm&#39;, &#39;&#39;)
+    if not no_rm.startswith(&#39;RM-&#39;):
+        errors.append(&quot;Invalid No. RM format (should start with RM-)&quot;)
+
+    return errors
+
+# Test validation
+test_data = [
+    {&#39;no_rm&#39;: &#39;RM-001&#39;, &#39;nama&#39;: &#39;Ahmad&#39;, &#39;umur&#39;: 28},
+    {&#39;no_rm&#39;: &#39;&#39;, &#39;nama&#39;: &#39;Sari&#39;, &#39;umur&#39;: 35},
+    {&#39;no_rm&#39;: &#39;RM-003&#39;, &#39;nama&#39;: &#39;Budi&#39;, &#39;umur&#39;: 200},
+    {&#39;no_rm&#39;: &#39;ABC-004&#39;, &#39;nama&#39;: &#39;Nina&#39;, &#39;umur&#39;: 29}
+]
+
+for i, data in enumerate(test_data, 1):
+    print(f&quot;\nValidating data {i}: {data}&quot;)
+    errors = validate_patient_data(data)
+    if errors:
+        print(&quot;  ✗ Validation errors:&quot;)
+        for error in errors:
+            print(f&quot;    - {error}&quot;)
+    else:
+        print(&quot;  ✓ Data valid&quot;)
+</code></pre>
+      <h3>5.3 Logging and Progress Tracking</h3>
+      <pre><code class="language-python">print(&quot;\n=== LOGGING AND PROGRESS ===&quot;)
+
+import logging
+from datetime import datetime
+
+# Setup logging
+logging.basicConfig(
+    filename=&#39;document_processing.log&#39;,
+    level=logging.INFO,
+    format=&#39;%(asctime)s - %(levelname)s - %(message)s&#39;
+)
+
+def process_with_logging(excel_path):
+    &quot;&quot;&quot;Process Excel with logging&quot;&quot;&quot;
+    logging.info(f&quot;Starting to process: {excel_path}&quot;)
+
+    try:
+        wb = load_workbook(excel_path)
+        ws = wb.active
+
+        total_rows = ws.max_row - 1  # Exclude header
+        logging.info(f&quot;Found {total_rows} rows to process&quot;)
+
+        processed = 0
+        errors = 0
+
+        for row in range(2, ws.max_row + 1):
+            try:
+                # Process row
+                no_rm = ws.cell(row=row, column=1).value
+                nama = ws.cell(row=row, column=2).value
+
+                # Simulate processing
+                print(f&quot;Processing: {no_rm} - {nama}&quot;)
+                processed += 1
+
+                logging.info(f&quot;Processed: {no_rm} - {nama}&quot;)
+
+            except Exception as e:
+                errors += 1
+                logging.error(f&quot;Error processing row {row}: {e}&quot;)
+
+        logging.info(f&quot;Processing complete: {processed} success, {errors} errors&quot;)
+        print(f&quot;\n✓ Processed: {processed} records&quot;)
+        print(f&quot;✗ Errors: {errors}&quot;)
+
+    except Exception as e:
+        logging.error(f&quot;Fatal error: {e}&quot;)
+        print(f&quot;✗ Fatal error: {e}&quot;)
+
+# Process with logging
+process_with_logging(&quot;data_pasien.xlsx&quot;)
+print(&quot;\nCheck &#39;document_processing.log&#39; for detailed logs&quot;)
+</code></pre>
+    </article>
+  </body>
+</html>

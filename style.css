@@ -1,0 +1,425 @@
+/* markdown-beautify.css
+   Modern, readable styles for HTML generated from Markdown
+   Drop into your project and wrap content in <article class="markdown-body"> ... </article>
+*/
+
+/* --- Base / Layout --- */
+:root {
+  --bg: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --accent: #0077cc;
+  --accent-2: #0ea5a4;
+  --border: #e6e9ee;
+  --code-bg: #0f1724;
+  --pre-bg: #0b1220;
+  --radius: 10px;
+  --container-max: 900px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",
+    "Courier New", monospace;
+  --ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --shadow: 0 6px 20px rgba(17, 24, 39, 0.06);
+  --lead-size: 1.05rem;
+  --flow-space: 1.25rem;
+}
+
+/* Dark-mode overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0f12;
+    --text: #e6eef6;
+    --muted: #9aa6b2;
+    --accent: #4fc3ff;
+    --accent-2: #6ee7b7;
+    --border: #162027;
+    --code-bg: #0b1220;
+    --pre-bg: #07101a;
+    --shadow: 0 8px 24px rgba(2, 6, 23, 0.6);
+  }
+}
+
+/* Page container */
+.markdown-body {
+  box-sizing: border-box;
+  margin: 32px auto;
+  padding: 36px;
+  max-width: var(--container-max);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--ui);
+  line-height: 1.6;
+  font-size: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* Flow spacing between top-level elements (paragraphs, headings, lists) */
+.markdown-body > * + * {
+  margin-top: var(--flow-space);
+}
+
+/* --- Typography --- */
+.markdown-body p {
+  color: var(--text);
+  font-size: 1rem;
+  margin: 0;
+  hyphens: auto;
+}
+
+.markdown-body p.lead {
+  font-size: var(--lead-size);
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+
+/* Headings */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin: 0;
+  padding: 0;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.markdown-body h1 {
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 0.6rem;
+}
+.markdown-body h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.markdown-body h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+.markdown-body h4 {
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+}
+
+/* Small text / captions */
+.markdown-body small,
+.markdown-body .muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Links */
+.markdown-body a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 1px;
+}
+@media (prefers-color-scheme: dark) {
+  .markdown-body a {
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+}
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+/* --- Lists --- */
+.markdown-body ul,
+.markdown-body ol {
+  margin: 0;
+  padding-left: 1.35rem;
+}
+
+.markdown-body li {
+  margin: 0.4rem 0;
+}
+
+/* Task lists */
+.markdown-body input[type="checkbox"] {
+  transform: translateY(0.08em);
+  margin-right: 0.5rem;
+  accent-color: var(--accent-2);
+}
+
+/* --- Code & Pre --- */
+.markdown-body code {
+  font-family: var(--mono);
+  font-size: 0.95em;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.15em 0.35em;
+  border-radius: 6px;
+  color: white;
+  border: 1px solid transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown-body code {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+.markdown-body pre {
+  margin: 0.6rem 0;
+  padding: 1rem;
+  border-radius: 12px;
+  overflow: auto;
+  background: var(--pre-bg);
+  color: #e6eef6;
+  box-shadow: inset 0 -6px 18px rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Make inline code stand out in headings too */
+.markdown-body h1 code,
+.markdown-body h2 code,
+.markdown-body h3 code {
+  background: transparent;
+  padding: 0;
+}
+
+/* Syntax highlight basics (works with server-side or client highlighter) */
+.markdown-body pre code {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre;
+}
+.markdown-body .token.comment,
+.markdown-body .token.prolog,
+.markdown-body .token.doctype,
+.markdown-body .token.cdata {
+  opacity: 0.7;
+  color: #94a3b8;
+}
+.markdown-body .token.punctuation {
+  color: #9aa4b2;
+}
+.markdown-body .token.property,
+.markdown-body .token.tag,
+.markdown-body .token.boolean,
+.markdown-body .token.number,
+.markdown-body .token.attr-name,
+.markdown-body .token.string,
+.markdown-body .token.char,
+.markdown-body .token.builtin {
+  color: #7dd3fc;
+} /* accent-ish */
+.markdown-body .token.function {
+  color: #ffd580;
+}
+.markdown-body .token.keyword {
+  color: #ffb86b;
+}
+
+/* --- Blockquote --- */
+.markdown-body blockquote {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-left: 4px solid var(--accent-2);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.02), transparent);
+  border-radius: 8px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Fancy callout helper (use <div class="callout callout-note">... ) */
+.markdown-body .callout {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.015), transparent);
+}
+.markdown-body .callout .icon {
+  min-width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  font-weight: 700;
+}
+.markdown-body .callout.callout-note .icon {
+  background: linear-gradient(180deg, var(--accent-2), rgba(0, 0, 0, 0.04));
+}
+.markdown-body .callout.callout-warning .icon {
+  background: #ffecb5;
+  color: #7a4b00;
+}
+.markdown-body .callout p {
+  margin: 0;
+  color: var(--text);
+}
+
+/* --- Images & Figures --- */
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 0.6rem 0;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.04);
+}
+
+.markdown-body figure {
+  margin: 0;
+}
+.markdown-body figcaption {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 0.4rem;
+  text-align: center;
+}
+
+/* --- Tables --- */
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.6rem 0;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.markdown-body thead {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.02), transparent);
+}
+.markdown-body th,
+.markdown-body td {
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.markdown-body th {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.markdown-body tbody tr:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+@media (prefers-color-scheme: dark) {
+  .markdown-body tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+/* Responsive table wrapper */
+.markdown-body .table-wrap {
+  overflow: auto;
+  border-radius: 8px;
+  padding-bottom: 8px;
+}
+
+/* --- Horizontal rule --- */
+.markdown-body hr {
+  height: 1px;
+  border: none;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 1.1rem 0;
+}
+
+/* --- Footnotes --- */
+.markdown-body .footnotes {
+  font-size: 0.92rem;
+  color: var(--muted);
+  border-top: 1px dashed var(--border);
+  padding-top: 0.75rem;
+  margin-top: 1rem;
+}
+.markdown-body .footnotes li {
+  margin: 0.4rem 0;
+}
+
+/* --- Misc helpers --- */
+.kbd {
+  display: inline-block;
+  padding: 0.12rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+/* Centered utility */
+.markdown-body .center {
+  text-align: center;
+}
+
+/* Numbered callouts / badges */
+.badge {
+  display: inline-block;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* --- Accessibility / small screens --- */
+@media (max-width: 720px) {
+  .markdown-body {
+    padding: 20px;
+    margin: 18px;
+    border-radius: 12px;
+    font-size: 15px;
+  }
+  .markdown-body h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* --- Print styles (simple) --- */
+@media print {
+  :root {
+    --bg: #fff;
+    --text: #000;
+    --border: #ddd;
+  }
+  .markdown-body {
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    border-radius: 0;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+}
+
+/* --- Optional: small table-of-contents / sticky header --- */
+.toc {
+  position: sticky;
+  top: 18px;
+  padding: 0.6rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.01), transparent);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  font-size: 0.95rem;
+}
+
+/* --- End of file --- */
