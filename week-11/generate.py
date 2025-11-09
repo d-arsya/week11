@@ -30,7 +30,7 @@ with open(output_file, "w", encoding="utf-8") as f:
     f.write("<h1>Index of Materi</h1>\n<ul>\n")
 
     for link in file_links:
-        f.write(f"<li><a href='/week-11/{link}' target='_blank'>{link}</a></li>\n")
+        f.write(f"<li><a href='/week-11/materi/{link}' target='_blank'>{link}</a></li>\n")
 
     f.write("</ul>\n</body>\n</html>")
 
