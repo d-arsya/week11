@@ -22,6 +22,13 @@
   --lead-size: 1.05rem;
   --flow-space: 1.25rem;
 }
+.language-python {
+  filter: blur(0.6px);
+  display: inline-block;
+  transform: rotate(-0.5deg);
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+  font-family: Arial, sans-serif;
+}
 body {
   user-select: none; /* Prevent text selection */
   -webkit-user-select: none; /* Safari/Chrome */
