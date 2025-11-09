@@ -1,6 +1,0 @@
-{
-  "scripts": {
-    "prebuild": "python week-11/generate.py",
-    "build": "echo 'Static site ready'"
-  }
-}
