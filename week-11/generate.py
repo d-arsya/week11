@@ -1,6 +1,9 @@
 import os
 
-folder = "materi"  # folder containing your files
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Path to materi folder relative to the script
+folder = os.path.join(script_dir, "materi")
 output_file = os.path.join(folder, "index.html")
 
 exclude_dirs = {"venv", "__pycache__"}  # folders to skip
