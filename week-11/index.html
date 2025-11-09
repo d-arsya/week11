@@ -393,24 +393,41 @@ doc = Document(&#39;rekam_medis.docx&#39;)
 
 print(&quot;Semua paragraphs:&quot;)
 for i, para in enumerate(doc.paragraphs):
-    if para.text:
-        print(f&quot;{i+1}. {para.text}&quot;)
+    if para.text.strip():
+        print(f&quot;{i+1}. {para.text.strip()}&quot;)
 
 # Extract specific information
 print(&quot;\n=== EKSTRAK INFORMASI ===&quot;)
-for para in doc.paragraphs:
-    if &quot;No. RM:&quot; in para.text:
-        no_rm = para.text.split(&quot;:&quot;)[1].strip()
+no_rm = nama = diagnosa = None
+
+for i, para in enumerate(doc.paragraphs):
+    text = para.text.strip()
+    if &quot;No. RM:&quot; in text:
+        no_rm = text.split(&quot;:&quot;, 1)[1].strip()
         print(f&quot;Nomor RM: {no_rm}&quot;)
-    if &quot;Nama:&quot; in para.text:
-        nama = para.text.split(&quot;:&quot;)[1].strip()
+    elif &quot;Nama:&quot; in text:
+        nama = text.split(&quot;:&quot;, 1)[1].strip()
         print(f&quot;Nama Pasien: {nama}&quot;)
-    if &quot;Diagnosa&quot; in para.text and para.style.name.startswith(&#39;Heading&#39;):
-        # Get next paragraph after heading
-        idx = doc.paragraphs.index(para)
-        if idx + 1 &lt; len(doc.paragraphs):
-            diagnosa = doc.paragraphs[idx + 1].text
+    elif &quot;Diagnosa&quot; in text and para.style.name.startswith(&quot;Heading&quot;):
+        # ambil paragraf berikutnya setelah heading
+        if i + 1 &lt; len(doc.paragraphs):
+            diagnosa = doc.paragraphs[i + 1].text.strip()
             print(f&quot;Diagnosa: {diagnosa}&quot;)
+
+# Tambahan (opsional): jika data di tabel, baca juga tabelnya
+for table in doc.tables:
+    for row in table.rows:
+        for cell in row.cells:
+            if &quot;No. RM&quot; in cell.text:
+                no_rm = cell.text.split(&quot;:&quot;)[-1].strip()
+            elif &quot;Nama&quot; in cell.text:
+                nama = cell.text.split(&quot;:&quot;)[-1].strip()
+
+print(&quot;\n=== DATA DOKUMEN ===&quot;)
+print(f&quot;Nomor RM: {no_rm}&quot;)
+print(f&quot;Nama Pasien: {nama}&quot;)
+print(f&quot;Diagnosa: {diagnosa}&quot;)
+
 </code></pre>
       <h3>2.3 Creating Word Documents</h3>
       <pre><code class="language-python">print(&quot;\n=== CREATING WORD DOCUMENTS ===&quot;)
@@ -734,6 +751,7 @@ for key, value in lab_data.items():
       <pre><code class="language-python">print(&quot;\n=== PDF TO EXCEL CONVERSION ===&quot;)
 
 from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
 
 def pdf_to_excel(pdf_path, excel_path):
     &quot;&quot;&quot;Convert lab results from PDF to Excel&quot;&quot;&quot;
@@ -768,6 +786,7 @@ pdf_to_excel(&quot;hasil_lab.pdf&quot;, &quot;hasil_lab_converted.xlsx&quot;)
 
 import os
 from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
 
 def batch_process_pdfs(pdf_folder, output_excel):
     &quot;&quot;&quot;Process multiple PDF files and consolidate to Excel&quot;&quot;&quot;
@@ -822,6 +841,7 @@ print(&quot;Batch processing function ready to use!&quot;)
       <pre><code class="language-python">print(&quot;\n=== WORKFLOW 1: EXCEL TO WORD REPORT ===&quot;)
 
 from openpyxl import load_workbook
+from openpyxl.styles import Font, PatternFill
 from docx import Document
 from datetime import datetime
 
