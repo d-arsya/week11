@@ -22,7 +22,12 @@
   --lead-size: 1.05rem;
   --flow-space: 1.25rem;
 }
-
+body {
+  user-select: none; /* Prevent text selection */
+  -webkit-user-select: none; /* Safari/Chrome */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+}
 /* Dark-mode overrides */
 @media (prefers-color-scheme: dark) {
   :root {
