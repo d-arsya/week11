@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Week 12 - Pandas Untuk Analisa Kesehatan</title>
+  </head>
+  <link rel="stylesheet" href="/week-12/style.css" />
+  <body
+    oncontextmenu="return false;"
+    onselectstart="return false;"
+    oncopy="return false;"
+  >
+    <article class="markdown-body">
+      <h1 id="week-12-pandas-untuk-analisis-data-kesehatan">
+        Week 12 - Pandas untuk Analisis Data Kesehatan
+      </h1>
+      <p>
+        <strong>Dosen:</strong> Muhammad Oriza Nurfajri, S.Kom., M.IT.<br /><strong
+          >Mata Kuliah:</strong
+        >
+        Algoritma dan Pemrograman<br /><strong>Pekan:</strong> Dua Belas<br /><strong
+          >Program Studi:</strong
+        >
+        D4 Manajemen Informasi Kesehatan, Sekolah Vokasi UGM
+      </p>
+      <hr />
+      <h2 id="capaian-pembelajaran">Capaian Pembelajaran</h2>
+      <p>Setelah menyelesaikan modul ini, mahasiswa diharapkan mampu:</p>
+      <h3 id="1-memahami-pentingnya-pandas-dalam-analisis-data-kesehatan">
+        1. Memahami Pentingnya Pandas dalam Analisis Data Kesehatan
+      </h3>
+      <ul>
+        <li>
+          Menjelaskan keunggulan Pandas dibandingkan Excel untuk data besar
+        </li>
+        <li>Memahami workflow analisis data dengan Pandas</li>
+        <li>
+          Mengidentifikasi use cases Pandas dalam manajemen informasi kesehatan
+        </li>
+      </ul>
+      <h3 id="2-menguasai-series-dan-dataframe">
+        2. Menguasai Series dan DataFrame
+      </h3>
+      <ul>
+        <li>Memahami struktur data Series (1D)</li>
+        <li>Memahami struktur data DataFrame (2D)</li>
+        <li>Membaca CSV dari Kaggle dataset</li>
+        <li>Melakukan eksplorasi data dasar</li>
+      </ul>
+      <h3 id="3-melakukan-seleksi-dan-filtering-data">
+        3. Melakukan Seleksi dan Filtering Data
+      </h3>
+      <ul>
+        <li>Memilih kolom dan baris tertentu</li>
+        <li>Menggunakan <code>.loc[]</code> dan <code>.iloc[]</code></li>
+        <li>Melakukan boolean filtering</li>
+        <li>Memfilter data berdasarkan kondisi kompleks</li>
+      </ul>
+      <h3 id="4-membersihkan-data-data-cleaning-">
+        4. Membersihkan Data (Data Cleaning)
+      </h3>
+      <ul>
+        <li>Mendeteksi missing values</li>
+        <li>Menangani missing values (drop, fill, replace)</li>
+        <li>Memahami pentingnya data bersih untuk analisis</li>
+      </ul>
+      <h3 id="5-melakukan-groupby-dan-aggregation">
+        5. Melakukan GroupBy dan Aggregation
+      </h3>
+      <ul>
+        <li>Mengelompokkan data berdasarkan kategori</li>
+        <li>Menghitung statistik per grup</li>
+        <li>Melakukan advanced aggregation dengan <code>.agg()</code></li>
+        <li>Membuat pivot tables</li>
+      </ul>
+      <h3 id="6-menggabungkan-dataset-merge-join-">
+        6. Menggabungkan Dataset (Merge &amp; Join)
+      </h3>
+      <ul>
+        <li>Memahami relasi antar tabel</li>
+        <li>Melakukan inner, left, right, outer join</li>
+        <li>Menggabungkan multiple datasets</li>
+      </ul>
+      <h3 id="7-mengintegrasikan-workflow-end-to-end">
+        7. Mengintegrasikan Workflow End-to-End
+      </h3>
+      <ul>
+        <li>Membuat pipeline: load → clean → merge → analyze</li>
+        <li>Mengekstrak insights dari data kesehatan</li>
+        <li>Export hasil analisis</li>
+      </ul>
+      <hr />
+      <h2 id="pengantar-mengapa-pandas-penting-">
+        Pengantar: Mengapa Pandas Penting?
+      </h2>
+      <p>
+        Dalam dunia manajemen informasi kesehatan, data adalah aset paling
+        berharga. Bayangkan Anda bekerja di rumah sakit yang harus:
+      </p>
+      <ul>
+        <li>
+          Menganalisis <strong>10,000+ data pasien</strong> untuk riset
+          epidemiologi
+        </li>
+        <li>
+          Menggabungkan
+          <strong>data pasien, hasil lab, dan billing</strong> dari sistem
+          berbeda
+        </li>
+        <li>
+          Mencari pola <strong>penyakit diabetes</strong> berdasarkan umur,
+          gender, dan BMI
+        </li>
+        <li>
+          Membuat <strong>laporan bulanan</strong> dengan statistik kompleks
+        </li>
+        <li>
+          Melakukan <strong>filtering cepat</strong> untuk identifikasi pasien
+          high-risk
+        </li>
+      </ul>
+      <p>Melakukan semua ini dengan <strong>Excel</strong> akan:</p>
+      <ul>
+        <li>❌ Lambat untuk data &gt; 100,000 rows</li>
+        <li>❌ Sulit untuk operasi kompleks (merge, groupby)</li>
+        <li>❌ Manual dan repetitif</li>
+        <li>❌ Rawan error saat copy-paste formula</li>
+        <li>❌ Tidak reproducible (susah di-audit)</li>
+      </ul>
+      <p><strong>Pandas</strong> menyediakan solusi:</p>
+      <ul>
+        <li>✅ Handle jutaan rows dengan cepat</li>
+        <li>✅ Operasi kompleks dalam 1-2 baris kode</li>
+        <li>✅ Otomatis dan reproducible</li>
+        <li>✅ Integrasi dengan library data science lain</li>
+        <li>✅ Standard tool untuk data science di dunia nyata</li>
+      </ul>
+      <h3 id="dataset-yang-digunakan">Dataset yang Digunakan</h3>
+      <p>
+        Kita akan menggunakan <strong>3 dataset Kaggle</strong> untuk
+        pembelajaran bertahap:
+      </p>
+      <ol>
+        <li>
+          <p><strong>Pima Indians Diabetes Database</strong> (Slides 2-7)</p>
+          <ul>
+            <li>768 rows, 8 features</li>
+            <li>Use case: Belajar dasar Pandas dengan data medis</li>
+            <li>Topics: Series, DataFrame, filtering, cleaning, groupby</li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Hospital Patient Records</strong> (Slide 8)</p>
+          <ul>
+            <li>Patient dan Treatment tables</li>
+            <li>Use case: Belajar merge/join operations</li>
+            <li>Topics: Inner, left, right, outer joins</li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Healthcare Datasets (Sample)</strong> (Slide 9)</p>
+          <ul>
+            <li>Multiple CSVs: patients, labs, billing</li>
+            <li>Use case: Full workflow integration</li>
+            <li>Topics: Multi-table analysis, end-to-end pipeline</li>
+          </ul>
+        </li>
+      </ol>
+      <h3 id="skill-yang-akan-dikuasai">Skill yang Akan Dikuasai</h3>
+      <p>Setelah modul ini, Anda akan bisa:</p>
+      <ul>
+        <li>📊 Load dan explore data kesehatan dari CSV</li>
+        <li>🔍 Filter data pasien berdasarkan kondisi medis</li>
+        <li>🧹 Clean missing values dan outliers</li>
+        <li>📈 Hitung statistik per grup (by gender, age, diagnosis)</li>
+        <li>🔗 Gabungkan data dari multiple sources</li>
+        <li>💾 Export hasil analisis ke CSV/Excel</li>
+      </ul>
+      <p>
+        <strong>Fun Fact:</strong> Pandas digunakan di 80%+ proyek data science
+        dan hampir semua kompetisi Kaggle menggunakan Pandas sebagai tool utama!
+      </p>
+      <hr />
+      <h2 id="1-introducing-series">1. Introducing Series</h2>
+      <h3 id="1-1-apa-itu-series-">1.1 Apa itu Series?</h3>
+      <p>
+        <strong>Series</strong> adalah struktur data 1-dimensi (seperti satu
+        kolom di Excel) yang memiliki:
+      </p>
+      <ul>
+        <li>Index (label untuk setiap nilai)</li>
+        <li>Values (nilai aktual)</li>
+        <li>Data type (tipe data)</li>
+      </ul>
+      <p><strong>Use Case dalam Data Kesehatan:</strong></p>
+      <ul>
+        <li>Daftar nilai glukosa pasien</li>
+        <li>List umur semua pasien</li>
+        <li>Series outcome diagnosis (0 = negatif, 1 = positif)</li>
+      </ul>
+      <h3 id="1-2-installation-dan-import">1.2 Installation dan Import</h3>
+      <pre><code class="lang-python"><span class="hljs-meta"># Installation (jika belum terinstall)</span>
+<span class="hljs-meta"># pip install pandas numpy</span>
+
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+
+<span class="hljs-title">print</span>(<span class="hljs-string">"Pandas berhasil diimport!"</span>)
+<span class="hljs-title">print</span>(f<span class="hljs-string">"Pandas version: {pd.__version__}"</span>)
+</code></pre>
+      <h3 id="1-3-membuat-series">1.3 Membuat Series</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"=== CREATING SERIES ==="</span>)
+
+<span class="hljs-comment"># Dari list</span>
+glucose_values = [<span class="hljs-number">120</span>, <span class="hljs-number">180</span>, <span class="hljs-number">95</span>, <span class="hljs-number">140</span>, <span class="hljs-number">160</span>]
+series_glucose = pd.Series(glucose_values)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Series dari list:"</span>)
+<span class="hljs-keyword">print</span>(series_glucose)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-comment"># Dengan custom index</span>
+series_glucose_named = pd.Series(
+    glucose_values, 
+    <span class="hljs-keyword">index</span>=[<span class="hljs-string">'Patient_A'</span>, <span class="hljs-string">'Patient_B'</span>, <span class="hljs-string">'Patient_C'</span>, <span class="hljs-string">'Patient_D'</span>, <span class="hljs-string">'Patient_E'</span>]
+)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Series dengan custom index:"</span>)
+<span class="hljs-keyword">print</span>(series_glucose_named)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-comment"># Dari dictionary</span>
+patient_ages = {
+    <span class="hljs-string">'RM001'</span>: <span class="hljs-number">28</span>,
+    <span class="hljs-string">'RM002'</span>: <span class="hljs-number">35</span>,
+    <span class="hljs-string">'RM003'</span>: <span class="hljs-number">42</span>,
+    <span class="hljs-string">'RM004'</span>: <span class="hljs-number">29</span>,
+    <span class="hljs-string">'RM005'</span>: <span class="hljs-number">38</span>
+}
+series_ages = pd.Series(patient_ages)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Series dari dictionary:"</span>)
+<span class="hljs-keyword">print</span>(series_ages)
+</code></pre>
+      <h3 id="1-4-accessing-series-elements">1.4 Accessing Series Elements</h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== ACCESSING SERIES ==="</span>)
+
+# Access by index position
+print(<span class="hljs-name">f</span><span class="hljs-string">"Glucose pasien pertama: {series_glucose[0]} mg/dL"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Glucose pasien ketiga: {series_glucose[2]} mg/dL"</span>)
+print()
+
+# Access by label
+print(<span class="hljs-name">f</span><span class="hljs-string">"Glucose Patient_B: {series_glucose_named['Patient_B']} mg/dL"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Umur RM003: {series_ages['RM003']} tahun"</span>)
+print()
+
+# Slicing
+print(<span class="hljs-string">"Glucose 3 pasien pertama:"</span>)
+print(<span class="hljs-name">series_glucose</span>[:<span class="hljs-number">3</span>])
+print()
+
+# Multiple selection
+print(<span class="hljs-string">"Umur beberapa pasien:"</span>)
+print(<span class="hljs-name">series_ages</span>[['RM001', 'RM003', 'RM005']])
+</code></pre>
+      <h3 id="1-5-series-operations-vectorized-">
+        1.5 Series Operations (Vectorized)
+      </h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== SERIES OPERATIONS ==="</span>)
+
+# Arithmetic operations (<span class="hljs-name">vectorized</span> - no loop needed!)
+print(<span class="hljs-string">"Konversi glucose dari mg/dL ke mmol/L (bagi 18):"</span>)
+glucose_mmol = series_glucose / <span class="hljs-number">18</span>
+print(<span class="hljs-name">glucose_mmol</span>)
+print()
+
+# Boolean operations
+print(<span class="hljs-string">"Pasien dengan glucose &gt; 140 mg/dL (diabetes threshold):"</span>)
+high_glucose = series_glucose &gt; <span class="hljs-number">140</span>
+print(<span class="hljs-name">high_glucose</span>)
+print()
+
+# Filtering based on condition
+print(<span class="hljs-string">"Nilai glucose yang tinggi:"</span>)
+print(<span class="hljs-name">series_glucose</span>[series_glucose &gt; <span class="hljs-number">140</span>])
+print()
+
+# Statistical operations
+print(<span class="hljs-name">f</span><span class="hljs-string">"Mean glucose: {series_glucose.mean():.2f} mg/dL"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Max glucose: {series_glucose.max()} mg/dL"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Min glucose: {series_glucose.min()} mg/dL"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Std deviation: {series_glucose.std():.2f}"</span>)
+</code></pre>
+      <h3 id="1-6-practical-example-analyzing-patient-ages">
+        1.6 Practical Example: Analyzing Patient Ages
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== PRACTICAL EXAMPLE: PATIENT AGES ==="</span>)
+
+<span class="hljs-comment"># Create Series from patient data</span>
+ages = pd.Series([28, 35, 42, 29, 38, 45, 32, 50, 27, 41], 
+                 index=[f<span class="hljs-string">'RM{str(i).zfill(3)}'</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(1, 11)])
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Data umur pasien:"</span>)
+<span class="hljs-built_in">print</span>(ages)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Analysis</span>
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Rata-rata umur: {ages.mean():.1f} tahun"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Umur tertinggi: {ages.max()} tahun"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Umur terendah: {ages.min()} tahun"</span>)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Categorization</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Pasien usia &gt; 40 tahun (high risk for some diseases):"</span>)
+high_risk_ages = ages[ages &gt; 40]
+<span class="hljs-built_in">print</span>(high_risk_ages)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Jumlah: {len(high_risk_ages)} pasien"</span>)
+</code></pre>
+      <p><strong>Key Takeaway Series:</strong></p>
+      <ul>
+        <li>Series = 1D labeled array</li>
+        <li>Vectorized operations (fast, no loops!)</li>
+        <li>Perfect untuk analisis single column</li>
+      </ul>
+      <hr />
+      <h2 id="2-understanding-dataframes">2. Understanding DataFrames</h2>
+      <h3 id="2-1-apa-itu-dataframe-">2.1 Apa itu DataFrame?</h3>
+      <p>
+        <strong>DataFrame</strong> adalah struktur data 2-dimensi (seperti tabel
+        Excel atau database table) yang memiliki:
+      </p>
+      <ul>
+        <li>Rows (baris) dengan index</li>
+        <li>Columns (kolom) dengan nama</li>
+        <li>Multiple data types per kolom</li>
+      </ul>
+      <p><strong>Analogi:</strong></p>
+      <ul>
+        <li>Series = 1 kolom Excel</li>
+        <li>DataFrame = Seluruh spreadsheet Excel</li>
+      </ul>
+      <h3 id="2-2-loading-data-from-kaggle-pima-diabetes-dataset">
+        2.2 Loading Data from Kaggle: Pima Diabetes Dataset
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"=== LOADING KAGGLE DATASET ==="</span>)
+
+<span class="hljs-meta"># Dataset: Pima Indians Diabetes Database</span>
+<span class="hljs-meta"># URL: https:<span class="hljs-comment">//www.kaggle.com/datasets/uciml/pima-indians-diabetes-database</span></span>
+<span class="hljs-meta"># Download dan simpan sebagai 'diabetes.csv'</span>
+
+<span class="hljs-meta"># Load CSV</span>
+df = pd.read_csv(<span class="hljs-string">'diabetes.csv'</span>)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"✅ Dataset berhasil dimuat!"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Shape: {df.shape[0]} rows × {df.shape[1]} columns"</span>)
+</code></pre>
+      <h3 id="2-3-initial-data-exploration">2.3 Initial Data Exploration</h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== INITIAL EXPLORATION ==="</span>)
+
+# First <span class="hljs-number">5</span> rows
+print(<span class="hljs-string">"5 Data pertama:"</span>)
+print(<span class="hljs-name">df</span>.head())
+print()
+
+# Last <span class="hljs-number">5</span> rows
+print(<span class="hljs-string">"5 Data terakhir:"</span>)
+print(<span class="hljs-name">df</span>.tail())
+print()
+
+# Random sample
+print(<span class="hljs-string">"5 Data random:"</span>)
+print(<span class="hljs-name">df</span>.sample(<span class="hljs-number">5</span>))
+</code></pre>
+      <h3 id="2-4-understanding-data-structure">
+        2.4 Understanding Data Structure
+      </h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== DATA STRUCTURE ==="</span>)
+
+# Info lengkap
+print(<span class="hljs-string">"Informasi dataset:"</span>)
+print(<span class="hljs-name">df</span>.info())
+print()
+
+# Column names
+print(<span class="hljs-string">"Nama kolom:"</span>)
+print(<span class="hljs-name">df</span>.columns.tolist())
+print()
+
+# Data types
+print(<span class="hljs-string">"Tipe data per kolom:"</span>)
+print(<span class="hljs-name">df</span>.dtypes)
+print()
+
+# Shape
+print(<span class="hljs-name">f</span><span class="hljs-string">"Dimensi: {df.shape}"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Total cells: {df.shape[0] * df.shape[1]:,}"</span>)
+</code></pre>
+      <h3 id="2-5-statistical-summary">2.5 Statistical Summary</h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== STATISTICAL SUMMARY ==="</span>)
+
+# Describe numeric columns
+print(<span class="hljs-string">"Statistik deskriptif:"</span>)
+print(<span class="hljs-name">df</span>.describe())
+print()
+
+# Specific statistics
+print(<span class="hljs-string">"Statistik spesifik:"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Mean Glucose: {df['Glucose'].mean():.2f} mg/dL"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Max BMI: {df['BMI'].max():.2f}"</span>)
+print(<span class="hljs-name">f</span><span class="hljs-string">"Min Age: {df['Age'].min()} years"</span>)
+print()
+
+# Value counts for categorical
+print(<span class="hljs-string">"Distribusi Outcome (0=No Diabetes, 1=Diabetes):"</span>)
+print(<span class="hljs-name">df</span>['Outcome'].value_counts())
+print()
+
+# Percentage
+print(<span class="hljs-string">"Persentase:"</span>)
+print(<span class="hljs-name">df</span>['Outcome'].value_counts(<span class="hljs-name">normalize=True</span>) * 100)
+</code></pre>
+      <h3 id="2-6-understanding-each-column">2.6 Understanding Each Column</h3>
+      <pre><code class="lang-python"><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-string">"\n=== COLUMN MEANINGS ==="</span>)</span></span>
+
+columns_info = {
+    <span class="hljs-string">'Pregnancies'</span>: <span class="hljs-string">'Jumlah kehamilan'</span>,
+    <span class="hljs-string">'Glucose'</span>: <span class="hljs-string">'Konsentrasi glukosa plasma (mg/dL)'</span>,
+    <span class="hljs-string">'BloodPressure'</span>: <span class="hljs-string">'Tekanan darah diastolik (mm Hg)'</span>,
+    <span class="hljs-string">'SkinThickness'</span>: <span class="hljs-string">'Ketebalan lipatan kulit trisep (mm)'</span>,
+    <span class="hljs-string">'Insulin'</span>: <span class="hljs-string">'Insulin serum 2 jam (mu U/ml)'</span>,
+    <span class="hljs-string">'BMI'</span>: <span class="hljs-string">'Body Mass Index (kg/m²)'</span>,
+    <span class="hljs-string">'DiabetesPedigreeFunction'</span>: <span class="hljs-string">'Fungsi riwayat diabetes keluarga'</span>,
+    <span class="hljs-string">'Age'</span>: <span class="hljs-string">'Umur (tahun)'</span>,
+    <span class="hljs-string">'Outcome'</span>: <span class="hljs-string">'Target variable (0=No, 1=Yes diabetes)'</span>
+}
+
+<span class="hljs-keyword">for</span> col, description <span class="hljs-keyword">in</span> columns_info.items():
+    <span class="hljs-keyword">if</span> col <span class="hljs-keyword">in</span> df<span class="hljs-selector-class">.columns</span>:
+        print(f<span class="hljs-string">"✓ {col:25s} : {description}"</span>)
+</code></pre>
+      <p><strong>Key Takeaway DataFrame:</strong></p>
+      <ul>
+        <li>DataFrame = Tabel 2D dengan label</li>
+        <li><code>.head()</code> = lihat data awal</li>
+        <li><code>.info()</code> = struktur data</li>
+        <li><code>.describe()</code> = statistik ringkas</li>
+      </ul>
+      <hr />
+      <h2 id="3-selecting-filtering-data">3. Selecting &amp; Filtering Data</h2>
+      <h3 id="3-1-column-selection">3.1 Column Selection</h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"=== COLUMN SELECTION ==="</span>)
+
+<span class="hljs-comment"># Single column (returns Series)</span>
+glucose = df[<span class="hljs-string">'Glucose'</span>]
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Type: {type(glucose)}"</span>)
+<span class="hljs-built_in">print</span>(glucose.head())
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Multiple columns (returns DataFrame)</span>
+clinical_data = df[[<span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'BloodPressure'</span>, <span class="hljs-string">'BMI'</span>]]
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Type: {type(clinical_data)}"</span>)
+<span class="hljs-built_in">print</span>(clinical_data.head())
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Create new DataFrame with specific columns</span>
+patient_profile = df[[<span class="hljs-string">'Age'</span>, <span class="hljs-string">'BMI'</span>, <span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'Outcome'</span>]]
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Patient profile:"</span>)
+<span class="hljs-built_in">print</span>(patient_profile.head())
+</code></pre>
+      <h3 id="3-2-row-selection-with-loc-label-based-">
+        3.2 Row Selection with .loc[] (Label-based)
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== ROW SELECTION WITH .loc[] ==="</span>)
+
+# Single row by <span class="hljs-built_in">index</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Data pasien index 0:"</span>)
+<span class="hljs-keyword">print</span>(df.<span class="hljs-keyword">loc</span>[<span class="hljs-number">0</span>])
+<span class="hljs-keyword">print</span>()
+
+# Multiple rows
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Data pasien index 0-4:"</span>)
+<span class="hljs-keyword">print</span>(df.<span class="hljs-keyword">loc</span>[<span class="hljs-number">0</span>:<span class="hljs-number">4</span>])
+<span class="hljs-keyword">print</span>()
+
+# Rows <span class="hljs-built_in">and</span> specific columns
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Age dan Glucose untuk pasien 0-4:"</span>)
+<span class="hljs-keyword">print</span>(df.<span class="hljs-keyword">loc</span>[<span class="hljs-number">0</span>:<span class="hljs-number">4</span>, [<span class="hljs-string">'Age'</span>, <span class="hljs-string">'Glucose'</span>]])
+<span class="hljs-keyword">print</span>()
+
+# All rows, specific columns
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Semua pasien, hanya Age dan Outcome:"</span>)
+<span class="hljs-keyword">print</span>(df.<span class="hljs-keyword">loc</span>[:, [<span class="hljs-string">'Age'</span>, <span class="hljs-string">'Outcome'</span>]].head())
+</code></pre>
+      <h3 id="3-3-row-selection-with-iloc-position-based-">
+        3.3 Row Selection with .iloc[] (Position-based)
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== ROW SELECTION WITH .iloc[] ==="</span>)
+
+# Single <span class="hljs-built_in">row</span> by <span class="hljs-built_in">position</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Data pasien posisi 0:"</span>)
+<span class="hljs-built_in">print</span>(df.iloc[<span class="hljs-number">0</span>])
+<span class="hljs-built_in">print</span>()
+
+# First <span class="hljs-number">5</span> rows
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"5 pasien pertama:"</span>)
+<span class="hljs-built_in">print</span>(df.iloc[<span class="hljs-number">0</span>:<span class="hljs-number">5</span>])
+<span class="hljs-built_in">print</span>()
+
+# Specific rows <span class="hljs-keyword">and</span> <span class="hljs-built_in">columns</span> by <span class="hljs-built_in">position</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Row 0-4, Column 0-3:"</span>)
+<span class="hljs-built_in">print</span>(df.iloc[<span class="hljs-number">0</span>:<span class="hljs-number">5</span>, <span class="hljs-number">0</span>:<span class="hljs-number">4</span>])
+<span class="hljs-built_in">print</span>()
+
+# Last <span class="hljs-number">3</span> rows
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"3 pasien terakhir:"</span>)
+<span class="hljs-built_in">print</span>(df.iloc[-<span class="hljs-number">3</span>:])
+</code></pre>
+      <h3 id="3-4-boolean-filtering-most-important-">
+        3.4 Boolean Filtering (Most Important!)
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== BOOLEAN FILTERING ==="</span>)
+
+<span class="hljs-comment"># Simple condition</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Pasien dengan Glucose &gt; 140 (diabetes threshold):"</span>)
+high_glucose = df[df[<span class="hljs-string">'Glucose'</span>] &gt; 140]
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Jumlah: {len(high_glucose)} pasien"</span>)
+<span class="hljs-built_in">print</span>(high_glucose.head())
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Multiple conditions with &amp; (AND)</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Pasien dengan Glucose &gt; 140 AND Age &gt; 40:"</span>)
+high_risk = df[(df[<span class="hljs-string">'Glucose'</span>] &gt; 140) &amp; (df[<span class="hljs-string">'Age'</span>] &gt; 40)]
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Jumlah: {len(high_risk)} pasien"</span>)
+<span class="hljs-built_in">print</span>(high_risk.head())
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Multiple conditions with | (OR)</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Pasien dengan Glucose &gt; 180 OR BMI &gt; 35:"</span>)
+very_high_risk = df[(df[<span class="hljs-string">'Glucose'</span>] &gt; 180) | (df[<span class="hljs-string">'BMI'</span>] &gt; 35)]
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Jumlah: {len(very_high_risk)} pasien"</span>)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Complex filtering</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Pasien diabetes (Outcome=1) dengan BMI &gt; 30:"</span>)
+diabetic_obese = df[(df[<span class="hljs-string">'Outcome'</span>] == 1) &amp; (df[<span class="hljs-string">'BMI'</span>] &gt; 30)]
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Jumlah: {len(diabetic_obese)} pasien"</span>)
+<span class="hljs-built_in">print</span>(diabetic_obese[[<span class="hljs-string">'Age'</span>, <span class="hljs-string">'BMI'</span>, <span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'Outcome'</span>]].head())
+</code></pre>
+      <h3 id="3-5-filtering-with-isin-">3.5 Filtering with .isin()</h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== FILTERING WITH .isin() ==="</span>)
+
+# Filter by multiple values
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Pasien dengan umur 25, 30, atau 35 tahun:"</span>)
+specific_ages = df[df[<span class="hljs-string">'Age'</span>].isin([<span class="hljs-number">25</span>, <span class="hljs-number">30</span>, <span class="hljs-number">35</span>])]
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Jumlah: {len(specific_ages)} pasien"</span>)
+<span class="hljs-built_in">print</span>(specific_ages<span class="hljs-string">[['Age', 'Glucose', 'Outcome']]</span>.head(<span class="hljs-number">10</span>))
+</code></pre>
+      <h3 id="3-6-practical-example-finding-high-risk-patients">
+        3.6 Practical Example: Finding High-Risk Patients
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== PRACTICAL: HIGH-RISK PATIENT IDENTIFICATION ==="</span>)
+
+<span class="hljs-meta"># <span class="hljs-meta-keyword">Define</span> high-risk criteria</span>
+<span class="hljs-meta"># - Glucose &gt; <span class="hljs-number">140</span> mg/dL (pre-diabetes/diabetes)</span>
+<span class="hljs-meta"># - BMI &gt; <span class="hljs-number">30</span> (obesity)</span>
+<span class="hljs-meta"># - Age &gt; <span class="hljs-number">45</span> (higher risk age)</span>
+<span class="hljs-meta"># - BloodPressure &gt; <span class="hljs-number">90</span> (hypertension)</span>
+
+high_risk_patients = df[
+    (df[<span class="hljs-string">'Glucose'</span>] &gt; <span class="hljs-number">140</span>) &amp; 
+    (df[<span class="hljs-string">'BMI'</span>] &gt; <span class="hljs-number">30</span>) &amp; 
+    (df[<span class="hljs-string">'Age'</span>] &gt; <span class="hljs-number">45</span>) &amp; 
+    (df[<span class="hljs-string">'BloodPressure'</span>] &gt; <span class="hljs-number">90</span>)
+]
+
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"🚨 Jumlah pasien high-risk: {len(high_risk_patients)}"</span>)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-meta"># Show relevant columns</span>
+risk_profile = high_risk_patients[[<span class="hljs-string">'Age'</span>, <span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'BMI'</span>, <span class="hljs-string">'BloodPressure'</span>, <span class="hljs-string">'Outcome'</span>]]
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Profil pasien high-risk:"</span>)
+<span class="hljs-keyword">print</span>(risk_profile)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-meta"># Statistics</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Statistik pasien high-risk:"</span>)
+<span class="hljs-keyword">print</span>(risk_profile.describe())
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-meta"># How many actually have diabetes?</span>
+diabetes_count = high_risk_patients[<span class="hljs-string">'Outcome'</span>].sum()
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Dari {len(high_risk_patients)} pasien high-risk:"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"  - {diabetes_count} memiliki diabetes ({diabetes_count/len(high_risk_patients)*100:.1f}%)"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"  - {len(high_risk_patients) - diabetes_count} belum diabetes ({(len(high_risk_patients) - diabetes_count)/len(high_risk_patients)*100:.1f}%)"</span>)
+</code></pre>
+      <p><strong>Key Takeaway Selection &amp; Filtering:</strong></p>
+      <ul>
+        <li><code>.loc[]</code> = selection by label</li>
+        <li><code>.iloc[]</code> = selection by position</li>
+        <li>Boolean filtering = most powerful!</li>
+        <li><code>&amp;</code> = AND, <code>|</code> = OR</li>
+        <li>Always use parentheses for multiple conditions</li>
+      </ul>
+      <hr />
+      <h2 id="4-data-cleaning-essentials">4. Data Cleaning Essentials</h2>
+      <h3 id="4-1-checking-for-missing-values">
+        4.1 Checking for Missing Values
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"=== CHECKING MISSING VALUES ==="</span>)
+
+# Check null values
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Missing values per column:"</span>)
+<span class="hljs-keyword">print</span>(df.isnull().<span class="hljs-built_in">sum</span>())
+<span class="hljs-keyword">print</span>()
+
+# Percentage of <span class="hljs-built_in">missing</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Percentage missing:"</span>)
+<span class="hljs-keyword">print</span>((df.isnull().<span class="hljs-built_in">sum</span>() / len(df) * 100).<span class="hljs-built_in">round</span>(2))
+<span class="hljs-keyword">print</span>()
+
+# <span class="hljs-keyword">Total</span> <span class="hljs-built_in">missing</span>
+total_missing = df.isnull().<span class="hljs-built_in">sum</span>().<span class="hljs-built_in">sum</span>()
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Total missing values: {total_missing}"</span>)
+</code></pre>
+      <h3 id="4-2-understanding-hidden-missing-values">
+        4.2 Understanding &quot;Hidden&quot; Missing Values
+      </h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== HIDDEN MISSING VALUES ==="</span>)
+
+<span class="hljs-meta"># In medical data, 0 values might indicate missing data</span>
+<span class="hljs-meta"># For example: BloodPressure, Glucose, BMI cannot be 0</span>
+
+print(<span class="hljs-string">"Checking zero values (potential missing data):"</span>)
+zero_counts = {
+    <span class="hljs-string">'Glucose'</span>: (df[<span class="hljs-string">'Glucose'</span>] == <span class="hljs-number">0</span>).<span class="hljs-keyword">sum</span>(),
+    <span class="hljs-string">'BloodPressure'</span>: (df[<span class="hljs-string">'BloodPressure'</span>] == <span class="hljs-number">0</span>).<span class="hljs-keyword">sum</span>(),
+    <span class="hljs-string">'SkinThickness'</span>: (df[<span class="hljs-string">'SkinThickness'</span>] == <span class="hljs-number">0</span>).<span class="hljs-keyword">sum</span>(),
+    <span class="hljs-string">'Insulin'</span>: (df[<span class="hljs-string">'Insulin'</span>] == <span class="hljs-number">0</span>).<span class="hljs-keyword">sum</span>(),
+    <span class="hljs-string">'BMI'</span>: (df[<span class="hljs-string">'BMI'</span>] == <span class="hljs-number">0</span>).<span class="hljs-keyword">sum</span>()
+}
+
+<span class="hljs-keyword">for</span> column, <span class="hljs-keyword">count</span> in zero_counts.items():
+    percentage = (<span class="hljs-keyword">count</span> / len(df)) * <span class="hljs-number">100</span>
+    print(f<span class="hljs-string">"  {column:20s}: {count:3d} zeros ({percentage:5.2f}%)"</span>)
+</code></pre>
+      <h3 id="4-3-handling-missing-values-replace-with-nan">
+        4.3 Handling Missing Values - Replace with NaN
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== REPLACING ZEROS WITH NaN ==="</span>)
+
+# Create <span class="hljs-keyword">a</span> <span class="hljs-keyword">copy</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">preserve</span> original
+df_clean = df.<span class="hljs-keyword">copy</span>()
+
+# Replace <span class="hljs-number">0</span> with NaN <span class="hljs-keyword">for</span> specific columns
+columns_to_clean = [<span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'BloodPressure'</span>, <span class="hljs-string">'SkinThickness'</span>, <span class="hljs-string">'Insulin'</span>, <span class="hljs-string">'BMI'</span>]
+
+<span class="hljs-keyword">for</span> <span class="hljs-keyword">col</span> in columns_to_clean:
+    df_clean[<span class="hljs-keyword">col</span>] = df_clean[<span class="hljs-keyword">col</span>].replace(<span class="hljs-number">0</span>, np.nan)
+
+# Check missing <span class="hljs-built_in">values</span> now
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Missing values after replacing zeros:"</span>)
+<span class="hljs-keyword">print</span>(df_clean[columns_to_clean].isnull().sum())
+<span class="hljs-keyword">print</span>()
+
+# Percentage
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Percentage missing:"</span>)
+<span class="hljs-keyword">print</span>((df_clean[columns_to_clean].isnull().sum() / <span class="hljs-built_in">len</span>(df_clean) * <span class="hljs-number">100</span>).<span class="hljs-built_in">round</span>(<span class="hljs-number">2</span>))
+</code></pre>
+      <h3 id="4-4-handling-missing-values-drop">
+        4.4 Handling Missing Values - Drop
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== DROPPING MISSING VALUES ==="</span>)
+
+# Drop any row <span class="hljs-keyword">with</span> missing value
+df_dropna = df_clean.dropna()
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Original rows: {len(df_clean)}"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"After dropna: {len(df_dropna)}"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Rows dropped: {len(df_clean) - len(df_dropna)}"</span>)
+<span class="hljs-built_in">print</span>()
+
+# Drop rows <span class="hljs-keyword">with</span> missing <span class="hljs-keyword">in</span> specific columns only
+# Keep rows <span class="hljs-keyword">with</span> missing Insulin/SkinThickness (too many missing)
+df_partial_drop = df_clean.dropna(subset=[<span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'BloodPressure'</span>, <span class="hljs-string">'BMI'</span>])
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"After dropping rows with missing Glucose/BP/BMI: {len(df_partial_drop)}"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"Rows dropped: {len(df_clean) - len(df_partial_drop)}"</span>)
+</code></pre>
+      <h3 id="4-5-handling-missing-values-fill">
+        4.5 Handling Missing Values - Fill
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== FILLING MISSING VALUES ==="</span>)
+
+# Strategy <span class="hljs-number">1</span>: Fill with <span class="hljs-built_in">mean</span>
+df_fill_mean = df_clean.<span class="hljs-built_in">copy</span>()
+<span class="hljs-keyword">for</span> <span class="hljs-built_in">col</span> <span class="hljs-keyword">in</span> columns_to_clean:
+    mean_value = df_clean[<span class="hljs-built_in">col</span>].<span class="hljs-built_in">mean</span>()
+    df_fill_mean[<span class="hljs-built_in">col</span>] = df_fill_mean[<span class="hljs-built_in">col</span>].fillna(mean_value)
+    <span class="hljs-built_in">print</span>(f<span class="hljs-string">"Filled {col} with mean: {mean_value:.2f}"</span>)
+
+<span class="hljs-built_in">print</span>()
+
+# Strategy <span class="hljs-number">2</span>: Fill with <span class="hljs-built_in">median</span> (better <span class="hljs-keyword">for</span> skewed data)
+df_fill_median = df_clean.<span class="hljs-built_in">copy</span>()
+<span class="hljs-keyword">for</span> <span class="hljs-built_in">col</span> <span class="hljs-keyword">in</span> columns_to_clean:
+    median_value = df_clean[<span class="hljs-built_in">col</span>].<span class="hljs-built_in">median</span>()
+    df_fill_median[<span class="hljs-built_in">col</span>] = df_fill_median[<span class="hljs-built_in">col</span>].fillna(median_value)
+    <span class="hljs-built_in">print</span>(f<span class="hljs-string">"Filled {col} with median: {median_value:.2f}"</span>)
+
+<span class="hljs-built_in">print</span>()
+
+# Verify no more missing
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Missing values after filling with median:"</span>)
+<span class="hljs-built_in">print</span>(df_fill_median.isnull().<span class="hljs-built_in">sum</span>())
+</code></pre>
+      <h3 id="4-6-practical-cleaning-workflow">
+        4.6 Practical Cleaning Workflow
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== PRACTICAL CLEANING WORKFLOW ==="</span>)
+
+# Step <span class="hljs-number">1</span>: Start with <span class="hljs-keyword">copy</span>
+df_final = df.<span class="hljs-keyword">copy</span>()
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"Step 1 - Original data: {len(df_final)} rows"</span>)
+
+# Step <span class="hljs-number">2</span>: Replace impossible zeros
+columns_with_zeros = [<span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'BloodPressure'</span>, <span class="hljs-string">'SkinThickness'</span>, <span class="hljs-string">'Insulin'</span>, <span class="hljs-string">'BMI'</span>]
+<span class="hljs-keyword">for</span> <span class="hljs-keyword">col</span> in columns_with_zero<span class="hljs-variable">s:</span>
+    df_final[<span class="hljs-keyword">col</span>] = df_final[<span class="hljs-keyword">col</span>].replace(<span class="hljs-number">0</span>, np.nan)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"Step 2 - Replaced zeros with NaN"</span>)
+
+# Step <span class="hljs-number">3</span>: Drop rows with missing critical <span class="hljs-built_in">values</span>
+# Glucose, BloodPressure, BMI are critical - <span class="hljs-keyword">drop</span> <span class="hljs-keyword">if</span> missing
+critical_columns = [<span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'BloodPressure'</span>, <span class="hljs-string">'BMI'</span>]
+df_final = df_final.dropna(subset=critical_columns)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"Step 3 - Dropped rows with missing critical values: {len(df_final)} rows"</span>)
+
+# Step <span class="hljs-number">4</span>: Fill non-critical missing <span class="hljs-built_in">values</span> with median
+# Insulin <span class="hljs-built_in">and</span> SkinThickness have too many missing, fill with median
+non_critical = [<span class="hljs-string">'Insulin'</span>, <span class="hljs-string">'SkinThickness'</span>]
+<span class="hljs-keyword">for</span> <span class="hljs-keyword">col</span> in non_critica<span class="hljs-variable">l:</span>
+    median_value = df_final[<span class="hljs-keyword">col</span>].median()
+    df_final[<span class="hljs-keyword">col</span>] = df_final[<span class="hljs-keyword">col</span>].fillna(median_value)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"Step 4 - Filled non-critical columns with median"</span>)
+
+# Step <span class="hljs-number">5</span>: Verify clean data
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"\nFinal clean data: {len(df_final)} rows"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Missing values:"</span>)
+<span class="hljs-keyword">print</span>(df_final.isnull().sum())
+<span class="hljs-keyword">print</span>()
+
+# Compare statistics before <span class="hljs-built_in">and</span> after
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Comparison - Glucose statistics:"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  Original mean: {df['Glucose'].mean():.2f}"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  Cleaned mean:  {df_final['Glucose'].mean():.2f}"</span>)
+<span class="hljs-keyword">print</span>()
+
+# Save cleaned data
+df_final.to_csv(<span class="hljs-string">'diabetes_cleaned.csv'</span>, <span class="hljs-built_in">index</span>=False)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"✅ Cleaned data saved to 'diabetes_cleaned.csv'"</span>)
+</code></pre>
+      <p><strong>Key Takeaway Data Cleaning:</strong></p>
+      <ul>
+        <li>Always check for missing values first</li>
+        <li>Medical data: 0 might mean missing!</li>
+        <li>Strategies: drop, fill with mean/median</li>
+        <li>Choose strategy based on data importance</li>
+        <li>Document your cleaning decisions</li>
+      </ul>
+      <hr />
+      <h2 id="5-groupby-basics">5. GroupBy Basics</h2>
+      <h3 id="5-1-understanding-groupby">5.1 Understanding GroupBy</h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"=== UNDERSTANDING GROUPBY ==="</span>)
+
+<span class="hljs-comment"># Load cleaned data</span>
+df = pd.read_csv(<span class="hljs-string">'diabetes_cleaned.csv'</span>)
+
+<span class="hljs-comment"># Simple groupby</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Average glucose by Outcome:"</span>)
+glucose_by_outcome = df.groupby(<span class="hljs-string">'Outcome'</span>)[<span class="hljs-string">'Glucose'</span>].mean()
+<span class="hljs-built_in">print</span>(glucose_by_outcome)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Interpretation</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Interpretasi:"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - Non-diabetes (0): {glucose_by_outcome[0]:.2f} mg/dL"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - Diabetes (1): {glucose_by_outcome[1]:.2f} mg/dL"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - Difference: {glucose_by_outcome[1] - glucose_by_outcome[0]:.2f} mg/dL"</span>)
+</code></pre>
+      <h3 id="5-2-groupby-with-multiple-statistics">
+        5.2 GroupBy with Multiple Statistics
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== MULTIPLE STATISTICS ==="</span>)
+
+<span class="hljs-comment"># Multiple aggregations</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Glucose statistics by Outcome:"</span>)
+glucose_stats = df.groupby(<span class="hljs-string">'Outcome'</span>)[<span class="hljs-string">'Glucose'</span>].agg([<span class="hljs-string">'mean'</span>, <span class="hljs-string">'median'</span>, <span class="hljs-string">'std'</span>, <span class="hljs-string">'min'</span>, <span class="hljs-string">'max'</span>])
+<span class="hljs-built_in">print</span>(glucose_stats)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Multiple columns</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Clinical measurements by Outcome:"</span>)
+clinical_stats = df.groupby(<span class="hljs-string">'Outcome'</span>)[[<span class="hljs-string">'Glucose'</span>, <span class="hljs-string">'BMI'</span>, <span class="hljs-string">'BloodPressure'</span>]].mean()
+<span class="hljs-built_in">print</span>(clinical_stats)
+</code></pre>
+      <h3 id="5-3-groupby-with-age-categories">
+        5.3 GroupBy with Age Categories
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== GROUPBY WITH AGE CATEGORIES ==="</span>)
+
+<span class="hljs-comment"># Create age categories</span>
+df[<span class="hljs-string">'AgeGroup'</span>] = pd.cut(df[<span class="hljs-string">'Age'</span>], 
+                         bins=[0, 30, 40, 50, 100], 
+                         labels=[<span class="hljs-string">'&lt;30'</span>, <span class="hljs-string">'30-40'</span>, <span class="hljs-string">'40-50'</span>, <span class="hljs-string">'&gt;50'</span>])
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Age group distribution:"</span>)
+<span class="hljs-built_in">print</span>(df[<span class="hljs-string">'AgeGroup'</span>].value_counts().sort_index())
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Glucose by age group</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Average glucose by age group:"</span>)
+glucose_by_age = df.groupby(<span class="hljs-string">'AgeGroup'</span>)[<span class="hljs-string">'Glucose'</span>].mean()
+<span class="hljs-built_in">print</span>(glucose_by_age)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Diabetes prevalence by age group</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Diabetes rate by age group:"</span>)
+diabetes_rate = df.groupby(<span class="hljs-string">'AgeGroup'</span>)[<span class="hljs-string">'Outcome'</span>].mean() * 100
+<span class="hljs-built_in">print</span>(diabetes_rate)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-comment"># Interpretation</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Interpretasi:"</span>)
+<span class="hljs-keyword">for</span> age_group <span class="hljs-keyword">in</span> glucose_by_age.index:
+    <span class="hljs-built_in">print</span>(f<span class="hljs-string">"  Age {age_group}: {glucose_by_age[age_group]:.1f} mg/dL, "</span>
+          f<span class="hljs-string">"Diabetes rate: {diabetes_rate[age_group]:.1f}%"</span>)
+</code></pre>
+      <h3 id="5-4-groupby-with-multiple-keys">
+        5.4 GroupBy with Multiple Keys
+      </h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== GROUPBY WITH MULTIPLE KEYS ==="</span>)
+
+# <span class="hljs-symbol">BMI</span> categories
+df[<span class="hljs-string">'BMICategory'</span>] = pd.cut(df[<span class="hljs-string">'BMI'</span>], 
+                            bins=[<span class="hljs-number">0</span>, <span class="hljs-number">18.5</span>, <span class="hljs-number">25</span>, <span class="hljs-number">30</span>, <span class="hljs-number">100</span>], 
+                            labels=[<span class="hljs-string">'Underweight'</span>, <span class="hljs-string">'Normal'</span>, <span class="hljs-string">'Overweight'</span>, <span class="hljs-string">'Obese'</span>])
+
+# <span class="hljs-symbol">Group</span> by age and <span class="hljs-symbol">BMI</span> category
+print(<span class="hljs-string">"Diabetes rate by Age Group and BMI Category:"</span>)
+multi_group = df.groupby([<span class="hljs-string">'AgeGroup'</span>, <span class="hljs-string">'BMICategory'</span>])[<span class="hljs-string">'Outcome'</span>].agg([<span class="hljs-string">'mean'</span>, <span class="hljs-string">'count'</span>])
+multi_group.columns = [<span class="hljs-string">'Diabetes_Rate'</span>, <span class="hljs-string">'Count'</span>]
+multi_group[<span class="hljs-string">'Diabetes_Rate'</span>] = multi_group[<span class="hljs-string">'Diabetes_Rate'</span>] * <span class="hljs-number">100</span>
+print(multi_group)
+</code></pre>
+      <h3 id="5-5-practical-example-risk-profile-analysis">
+        5.5 Practical Example: Risk Profile Analysis
+      </h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== PRACTICAL: RISK PROFILE ANALYSIS ==="</span>)
+
+<span class="hljs-comment"># Create comprehensive risk profile</span>
+print(<span class="hljs-string">"Comprehensive risk profile by age group:"</span>)
+risk_profile = df.groupby(<span class="hljs-string">'AgeGroup'</span>).agg({
+    <span class="hljs-string">'Glucose'</span>: [<span class="hljs-string">'mean'</span>, <span class="hljs-string">'std'</span>],
+    <span class="hljs-string">'BMI'</span>: [<span class="hljs-string">'mean'</span>, <span class="hljs-string">'std'</span>],
+    <span class="hljs-string">'BloodPressure'</span>: [<span class="hljs-string">'mean'</span>, <span class="hljs-string">'std'</span>],
+    <span class="hljs-string">'Outcome'</span>: [<span class="hljs-string">'mean'</span>, <span class="hljs-string">'count'</span>]
+})
+
+print(risk_profile.round(<span class="hljs-number">2</span>))
+print()
+
+<span class="hljs-comment"># Simplify column names</span>
+risk_profile.columns = [<span class="hljs-string">'_'</span>.join(col) <span class="hljs-keyword">for</span> col <span class="hljs-keyword">in</span> risk_profile.columns]
+print(<span class="hljs-string">"Simplified view:"</span>)
+print(risk_profile)
+print()
+
+<span class="hljs-comment"># Find highest risk age group</span>
+print(<span class="hljs-string">"Risk ranking by age group:"</span>)
+risk_ranking = df.groupby(<span class="hljs-string">'AgeGroup'</span>)[<span class="hljs-string">'Outcome'</span>].mean().sort_values(ascending=<span class="hljs-keyword">False</span>) * <span class="hljs-number">100</span>
+<span class="hljs-keyword">for</span> i, (age_group, rate) <span class="hljs-keyword">in</span> enumerate(risk_ranking.items(), <span class="hljs-number">1</span>):
+    print(f<span class="hljs-string">"  {i}. Age {age_group}: {rate:.1f}% diabetes rate"</span>)
+</code></pre>
+      <p><strong>Key Takeaway GroupBy:</strong></p>
+      <ul>
+        <li><code>.groupby()</code> = group data by category</li>
+        <li>Can group by multiple columns</li>
+        <li>Common aggregations: mean, median, count, sum</li>
+        <li>Use <code>.agg()</code> for multiple statistics</li>
+        <li>Powerful for finding patterns!</li>
+      </ul>
+      <hr />
+      <h2 id="6-advanced-aggregation">6. Advanced Aggregation</h2>
+      <h3 id="6-1-custom-aggregations-with-agg-">
+        6.1 Custom Aggregations with .agg()
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"=== ADVANCED AGGREGATION WITH .agg() ==="</span>)
+
+# Load cleaned data
+df = pd.read_csv(<span class="hljs-string">'diabetes_cleaned.csv'</span>)
+
+# Multiple aggregations <span class="hljs-keyword">on</span> single column
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Glucose statistics by Outcome:"</span>)
+glucose_agg = df.groupby(<span class="hljs-string">'Outcome'</span>)[<span class="hljs-string">'Glucose'</span>].agg([
+    (<span class="hljs-string">'Mean'</span>, <span class="hljs-string">'mean'</span>),
+    (<span class="hljs-string">'Median'</span>, <span class="hljs-string">'median'</span>),
+    (<span class="hljs-string">'Std_Dev'</span>, <span class="hljs-string">'std'</span>),
+    (<span class="hljs-string">'Min'</span>, <span class="hljs-string">'min'</span>),
+    (<span class="hljs-string">'Max'</span>, <span class="hljs-string">'max'</span>),
+    (<span class="hljs-string">'Count'</span>, <span class="hljs-string">'count'</span>)
+])
+<span class="hljs-keyword">print</span>(glucose_agg.<span class="hljs-built_in">round</span>(<span class="hljs-number">2</span>))
+<span class="hljs-keyword">print</span>()
+
+# Different aggregations <span class="hljs-keyword">for</span> different columns
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Multiple columns, different aggregations:"</span>)
+multi_agg = df.groupby(<span class="hljs-string">'Outcome'</span>).agg({
+    <span class="hljs-string">'Glucose'</span>: [<span class="hljs-string">'mean'</span>, <span class="hljs-string">'std'</span>],
+    <span class="hljs-string">'BMI'</span>: [<span class="hljs-string">'mean'</span>, <span class="hljs-string">'median'</span>],
+    <span class="hljs-string">'Age'</span>: [<span class="hljs-string">'min'</span>, <span class="hljs-string">'max'</span>],
+    <span class="hljs-string">'Pregnancies'</span>: <span class="hljs-string">'sum'</span>
+})
+<span class="hljs-keyword">print</span>(multi_agg.<span class="hljs-built_in">round</span>(<span class="hljs-number">2</span>))
+</code></pre>
+      <h3 id="6-2-custom-functions-with-lambda">
+        6.2 Custom Functions with Lambda
+      </h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== CUSTOM FUNCTIONS WITH LAMBDA ==="</span>)
+
+<span class="hljs-comment"># Define custom aggregation functions</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">range_func</span><span class="hljs-params">(x)</span>:</span>
+    <span class="hljs-keyword">return</span> x.max() - x.min()
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">cv_func</span><span class="hljs-params">(x)</span>:</span>
+    <span class="hljs-string">"""Coefficient of Variation"""</span>
+    <span class="hljs-keyword">return</span> (x.std() / x.mean()) * <span class="hljs-number">100</span>
+
+<span class="hljs-comment"># Apply custom functions</span>
+print(<span class="hljs-string">"Custom aggregations:"</span>)
+custom_agg = df.groupby(<span class="hljs-string">'Outcome'</span>)[<span class="hljs-string">'Glucose'</span>].agg([
+    (<span class="hljs-string">'Mean'</span>, <span class="hljs-string">'mean'</span>),
+    (<span class="hljs-string">'Range'</span>, range_func),
+    (<span class="hljs-string">'CV%'</span>, cv_func)
+])
+print(custom_agg.round(<span class="hljs-number">2</span>))
+print()
+
+<span class="hljs-comment"># Lambda functions inline</span>
+print(<span class="hljs-string">"Using lambda functions:"</span>)
+lambda_agg = df.groupby(<span class="hljs-string">'Outcome'</span>)[<span class="hljs-string">'BMI'</span>].agg([
+    (<span class="hljs-string">'Mean'</span>, <span class="hljs-string">'mean'</span>),
+    (<span class="hljs-string">'Above_30'</span>, <span class="hljs-keyword">lambda</span> x: (x &gt; <span class="hljs-number">30</span>).sum()),
+    (<span class="hljs-string">'Pct_Above_30'</span>, <span class="hljs-keyword">lambda</span> x: (x &gt; <span class="hljs-number">30</span>).mean() * <span class="hljs-number">100</span>)
+])
+print(lambda_agg.round(<span class="hljs-number">2</span>))
+</code></pre>
+      <h3 id="6-3-pivot-tables">6.3 Pivot Tables</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== PIVOT TABLES ==="</span>)
+
+<span class="hljs-comment"># Create age and BMI categories</span>
+df[<span class="hljs-string">'AgeGroup'</span>] = pd.cut(df[<span class="hljs-string">'Age'</span>], bins=[<span class="hljs-number">0</span>, <span class="hljs-number">30</span>, <span class="hljs-number">40</span>, <span class="hljs-number">50</span>, <span class="hljs-number">100</span>], 
+                         labels=[<span class="hljs-string">'&lt;30'</span>, <span class="hljs-string">'30-40'</span>, <span class="hljs-string">'40-50'</span>, <span class="hljs-string">'&gt;50'</span>])
+df[<span class="hljs-string">'BMICategory'</span>] = pd.cut(df[<span class="hljs-string">'BMI'</span>], bins=[<span class="hljs-number">0</span>, <span class="hljs-number">25</span>, <span class="hljs-number">30</span>, <span class="hljs-number">100</span>], 
+                            labels=[<span class="hljs-string">'Normal'</span>, <span class="hljs-string">'Overweight'</span>, <span class="hljs-string">'Obese'</span>])
+
+<span class="hljs-comment"># Simple pivot table</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Diabetes rate by Age and BMI (Pivot Table):"</span>)
+pivot1 = df.pivot_table(
+    <span class="hljs-keyword">values</span>=<span class="hljs-string">'Outcome'</span>,
+    <span class="hljs-keyword">index</span>=<span class="hljs-string">'AgeGroup'</span>,
+    columns=<span class="hljs-string">'BMICategory'</span>,
+    aggfunc=<span class="hljs-string">'mean'</span>
+) * <span class="hljs-number">100</span>
+<span class="hljs-keyword">print</span>(pivot1.round(<span class="hljs-number">1</span>))
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-comment"># Pivot with multiple aggregations</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Count and diabetes rate:"</span>)
+pivot2 = df.pivot_table(
+    <span class="hljs-keyword">values</span>=<span class="hljs-string">'Outcome'</span>,
+    <span class="hljs-keyword">index</span>=<span class="hljs-string">'AgeGroup'</span>,
+    columns=<span class="hljs-string">'BMICategory'</span>,
+    aggfunc=[<span class="hljs-string">'count'</span>, <span class="hljs-string">'mean'</span>]
+)
+<span class="hljs-keyword">print</span>(pivot2)
+</code></pre>
+      <h3 id="6-4-advanced-pivot-with-margins">
+        6.4 Advanced Pivot with Margins
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== PIVOT WITH MARGINS (TOTALS) ==="</span>)
+
+<span class="hljs-comment"># Pivot with row and column totals</span>
+pivot_margins = df.pivot_table(
+    <span class="hljs-keyword">values</span>=<span class="hljs-string">'Outcome'</span>,
+    <span class="hljs-keyword">index</span>=<span class="hljs-string">'AgeGroup'</span>,
+    columns=<span class="hljs-string">'BMICategory'</span>,
+    aggfunc=<span class="hljs-string">'mean'</span>,
+    margins=True,
+    margins_name=<span class="hljs-string">'Total'</span>
+) * <span class="hljs-number">100</span>
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Diabetes rate with totals:"</span>)
+<span class="hljs-keyword">print</span>(pivot_margins.round(<span class="hljs-number">1</span>))
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-comment"># Interpretation</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Interpretasi:"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"  - Overall diabetes rate: {pivot_margins.loc['Total', 'Total']:.1f}%")
+print(f"</span>  - Highest risk: Age {pivot_margins.drop(<span class="hljs-string">'Total'</span>).idxmax().mode()[<span class="hljs-number">0</span>]}, <span class="hljs-string">"
+      f"</span>BMI {pivot_margins.drop(<span class="hljs-string">'Total'</span>, axis=<span class="hljs-number">1</span>).max(axis=<span class="hljs-number">1</span>).idxmax()}<span class="hljs-string">")</span>
+</code></pre>
+      <h3 id="6-5-complex-multi-level-aggregation">
+        6.5 Complex Multi-Level Aggregation
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== COMPLEX MULTI-LEVEL AGGREGATION ==="</span>)
+
+# Create Glucose risk categories
+df[<span class="hljs-string">'GlucoseRisk'</span>] = pd.cut(df[<span class="hljs-string">'Glucose'</span>], 
+                            bins=[<span class="hljs-number">0</span>, <span class="hljs-number">100</span>, <span class="hljs-number">140</span>, <span class="hljs-number">200</span>], 
+                            labels=[<span class="hljs-string">'Normal'</span>, <span class="hljs-string">'Pre-Diabetes'</span>, <span class="hljs-string">'Diabetes'</span>])
+
+# Multi-level groupby with multiple metrics
+complex_agg = df.groupby([<span class="hljs-string">'AgeGroup'</span>, <span class="hljs-string">'GlucoseRisk'</span>]).agg({
+    <span class="hljs-string">'Outcome'</span>: [<span class="hljs-string">'count'</span>, <span class="hljs-string">'mean'</span>],
+    <span class="hljs-string">'BMI'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'BloodPressure'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'Insulin'</span>: <span class="hljs-string">'mean'</span>
+}).<span class="hljs-built_in">round</span>(<span class="hljs-number">2</span>)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Complex analysis by Age and Glucose Risk:"</span>)
+<span class="hljs-keyword">print</span>(complex_agg)
+<span class="hljs-keyword">print</span>()
+
+# Flatten column names <span class="hljs-keyword">for</span> easier access
+complex_agg.columns = [<span class="hljs-string">'_'</span>.<span class="hljs-keyword">join</span>(<span class="hljs-keyword">col</span>) <span class="hljs-keyword">for</span> <span class="hljs-keyword">col</span> in complex_agg.columns]
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Flattened columns:"</span>)
+<span class="hljs-keyword">print</span>(complex_agg.head(<span class="hljs-number">10</span>))
+</code></pre>
+      <h3 id="6-6-practical-example-clinical-decision-support">
+        6.6 Practical Example: Clinical Decision Support
+      </h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"\n=== PRACTICAL: CLINICAL DECISION SUPPORT ==="</span>)
+
+# <span class="hljs-symbol">Build</span> comprehensive patient risk profile
+print(<span class="hljs-string">"Patient Risk Stratification:"</span>)
+
+# <span class="hljs-symbol">Define</span> risk thresholds
+risk_thresholds = {
+    <span class="hljs-string">'Glucose'</span>: <span class="hljs-number">140</span>,
+    <span class="hljs-string">'BMI'</span>: <span class="hljs-number">30</span>,
+    <span class="hljs-string">'BloodPressure'</span>: <span class="hljs-number">90</span>,
+    <span class="hljs-string">'Age'</span>: <span class="hljs-number">45</span>
+}
+
+# <span class="hljs-symbol">Create</span> risk flags
+df[<span class="hljs-string">'HighGlucose'</span>] = (df[<span class="hljs-string">'Glucose'</span>] &gt; risk_thresholds[<span class="hljs-string">'Glucose'</span>]).astype(int)
+df[<span class="hljs-string">'HighBMI'</span>] = (df[<span class="hljs-string">'BMI'</span>] &gt; risk_thresholds[<span class="hljs-string">'BMI'</span>]).astype(int)
+df[<span class="hljs-string">'HighBP'</span>] = (df[<span class="hljs-string">'BloodPressure'</span>] &gt; risk_thresholds[<span class="hljs-string">'BloodPressure'</span>]).astype(int)
+df[<span class="hljs-string">'HighAge'</span>] = (df[<span class="hljs-string">'Age'</span>] &gt; risk_thresholds[<span class="hljs-string">'Age'</span>]).astype(int)
+
+# <span class="hljs-symbol">Calculate</span> total risk score
+df[<span class="hljs-string">'RiskScore'</span>] = df[<span class="hljs-string">'HighGlucose'</span>] + df[<span class="hljs-string">'HighBMI'</span>] + df[<span class="hljs-string">'HighBP'</span>] + df[<span class="hljs-string">'HighAge'</span>]
+
+# <span class="hljs-symbol">Analyze</span> by risk score
+risk_analysis = df.groupby(<span class="hljs-string">'RiskScore'</span>).agg({
+    <span class="hljs-string">'Outcome'</span>: [<span class="hljs-string">'count'</span>, <span class="hljs-string">'mean'</span>],
+    <span class="hljs-string">'Glucose'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'BMI'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'Age'</span>: <span class="hljs-string">'mean'</span>
+}).round(<span class="hljs-number">2</span>)
+
+risk_analysis.columns = [<span class="hljs-string">'Patient_Count'</span>, <span class="hljs-string">'Diabetes_Rate'</span>, <span class="hljs-string">'Avg_Glucose'</span>, <span class="hljs-string">'Avg_BMI'</span>, <span class="hljs-string">'Avg_Age'</span>]
+risk_analysis[<span class="hljs-string">'Diabetes_Rate'</span>] = risk_analysis[<span class="hljs-string">'Diabetes_Rate'</span>] * <span class="hljs-number">100</span>
+
+print(risk_analysis)
+print()
+
+# <span class="hljs-symbol">Risk</span> categorization
+print(<span class="hljs-string">"Risk Category Summary:"</span>)
+print(f<span class="hljs-string">"  Low Risk (Score 0-1): {len(df[df['RiskScore'] &lt;= 1])} patients, "</span>
+      f<span class="hljs-string">"Diabetes rate: {df[df['RiskScore'] &lt;= 1]['Outcome'].mean()*100:.1f}%"</span>)
+print(f<span class="hljs-string">"  Medium Risk (Score 2): {len(df[df['RiskScore'] == 2])} patients, "</span>
+      f<span class="hljs-string">"Diabetes rate: {df[df['RiskScore'] == 2]['Outcome'].mean()*100:.1f}%"</span>)
+print(f<span class="hljs-string">"  High Risk (Score 3-4): {len(df[df['RiskScore'] &gt;= 3])} patients, "</span>
+      f<span class="hljs-string">"Diabetes rate: {df[df['RiskScore'] &gt;= 3]['Outcome'].mean()*100:.1f}%"</span>)
+</code></pre>
+      <p><strong>Key Takeaway Advanced Aggregation:</strong></p>
+      <ul>
+        <li><code>.agg()</code> = flexible aggregations</li>
+        <li>Custom functions with lambda</li>
+        <li>Pivot tables = Excel-style cross-tabs</li>
+        <li><code>margins=True</code> = add totals</li>
+        <li>Combine features for risk scoring</li>
+      </ul>
+      <hr />
+      <h2 id="7-merge-join-operations">7. Merge &amp; Join Operations</h2>
+      <h3 id="7-1-understanding-relationships-between-tables">
+        7.1 Understanding Relationships Between Tables
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"=== UNDERSTANDING TABLE RELATIONSHIPS ==="</span>)
+
+<span class="hljs-comment"># In this section, we'll use Hospital Patient Records dataset</span>
+<span class="hljs-comment"># This dataset has two tables:</span>
+<span class="hljs-comment"># 1. patients.csv - Patient demographics</span>
+<span class="hljs-comment"># 2. treatments.csv - Medical treatments/visits</span>
+
+<span class="hljs-comment"># For demonstration, let's create sample data similar to the dataset structure</span>
+
+<span class="hljs-comment"># Create sample patients data</span>
+patients_data = {
+    <span class="hljs-string">'patient_id'</span>: [<span class="hljs-string">'P001'</span>, <span class="hljs-string">'P002'</span>, <span class="hljs-string">'P003'</span>, <span class="hljs-string">'P004'</span>, <span class="hljs-string">'P005'</span>],
+    <span class="hljs-string">'name'</span>: [<span class="hljs-string">'Ahmad Rizky'</span>, <span class="hljs-string">'Sari Dewi'</span>, <span class="hljs-string">'Budi Santoso'</span>, <span class="hljs-string">'Nina Wulan'</span>, <span class="hljs-string">'Eko Prasetyo'</span>],
+    <span class="hljs-string">'age'</span>: [28, 35, 42, 29, 38],
+    <span class="hljs-string">'gender'</span>: [<span class="hljs-string">'M'</span>, <span class="hljs-string">'F'</span>, <span class="hljs-string">'M'</span>, <span class="hljs-string">'F'</span>, <span class="hljs-string">'M'</span>],
+    <span class="hljs-string">'city'</span>: [<span class="hljs-string">'Yogyakarta'</span>, <span class="hljs-string">'Jakarta'</span>, <span class="hljs-string">'Bandung'</span>, <span class="hljs-string">'Surabaya'</span>, <span class="hljs-string">'Semarang'</span>]
+}
+patients = pd.DataFrame(patients_data)
+
+<span class="hljs-comment"># Create sample treatments data</span>
+treatments_data = {
+    <span class="hljs-string">'treatment_id'</span>: [<span class="hljs-string">'T001'</span>, <span class="hljs-string">'T002'</span>, <span class="hljs-string">'T003'</span>, <span class="hljs-string">'T004'</span>, <span class="hljs-string">'T005'</span>, <span class="hljs-string">'T006'</span>],
+    <span class="hljs-string">'patient_id'</span>: [<span class="hljs-string">'P001'</span>, <span class="hljs-string">'P001'</span>, <span class="hljs-string">'P002'</span>, <span class="hljs-string">'P003'</span>, <span class="hljs-string">'P004'</span>, <span class="hljs-string">'P006'</span>],  <span class="hljs-comment"># P006 doesn't exist in patients</span>
+    <span class="hljs-string">'diagnosis'</span>: [<span class="hljs-string">'Diabetes'</span>, <span class="hljs-string">'Hypertension'</span>, <span class="hljs-string">'Diabetes'</span>, <span class="hljs-string">'Gastritis'</span>, <span class="hljs-string">'Anemia'</span>, <span class="hljs-string">'Fever'</span>],
+    <span class="hljs-string">'cost'</span>: [750000, 450000, 800000, 350000, 500000, 200000],
+    <span class="hljs-string">'date'</span>: [<span class="hljs-string">'2024-01-15'</span>, <span class="hljs-string">'2024-01-20'</span>, <span class="hljs-string">'2024-01-16'</span>, <span class="hljs-string">'2024-01-18'</span>, <span class="hljs-string">'2024-01-19'</span>, <span class="hljs-string">'2024-01-21'</span>]
+}
+treatments = pd.DataFrame(treatments_data)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"PATIENTS TABLE:"</span>)
+<span class="hljs-built_in">print</span>(patients)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"TREATMENTS TABLE:"</span>)
+<span class="hljs-built_in">print</span>(treatments)
+<span class="hljs-built_in">print</span>()
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Key Observations:"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - Patients has {len(patients)} rows"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - Treatments has {len(treatments)} rows"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - Common key: 'patient_id'"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - P001 has 2 treatments"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - P005 has no treatments"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  - P006 has treatment but not in patients table"</span>)
+</code></pre>
+      <h3 id="7-2-inner-join">7.2 Inner Join</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== INNER JOIN ==="</span>)
+
+# Inner <span class="hljs-keyword">join</span>: Keep <span class="hljs-keyword">only</span> matching records from both tables
+inner_result = pd.merge(patients, treatments, <span class="hljs-keyword">on</span>=<span class="hljs-string">'patient_id'</span>, how=<span class="hljs-string">'inner'</span>)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"INNER JOIN Result:"</span>)
+<span class="hljs-keyword">print</span>(inner_result)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Explanation:"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - Result has {len(inner_result)} rows"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - Only patients with treatments are included"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P005 excluded (no treatment)"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P006 excluded (not in patients table)"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P001 appears twice (2 treatments)"</span>)
+</code></pre>
+      <h3 id="7-3-left-join">7.3 Left Join</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== LEFT JOIN ==="</span>)
+
+# Left <span class="hljs-keyword">join</span>: Keep <span class="hljs-keyword">all</span> records from <span class="hljs-keyword">left</span> table (patients)
+left_result = pd.merge(patients, treatments, <span class="hljs-keyword">on</span>=<span class="hljs-string">'patient_id'</span>, how=<span class="hljs-string">'left'</span>)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"LEFT JOIN Result:"</span>)
+<span class="hljs-keyword">print</span>(left_result)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Explanation:"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - Result has {len(left_result)} rows"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - All patients included"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P005 included with NaN in treatment columns"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P006 excluded (not in patients table)"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - Useful for: 'Show all patients, with treatments if available'"</span>)
+</code></pre>
+      <h3 id="7-4-right-join">7.4 Right Join</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== RIGHT JOIN ==="</span>)
+
+# Right <span class="hljs-keyword">join</span>: Keep <span class="hljs-keyword">all</span> records from <span class="hljs-keyword">right</span> table (treatments)
+right_result = pd.merge(patients, treatments, <span class="hljs-keyword">on</span>=<span class="hljs-string">'patient_id'</span>, how=<span class="hljs-string">'right'</span>)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"RIGHT JOIN Result:"</span>)
+<span class="hljs-keyword">print</span>(right_result)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Explanation:"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - Result has {len(right_result)} rows"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - All treatments included"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P006 included with NaN in patient columns"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P005 excluded (no treatment)"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - Useful for: 'Show all treatments, with patient info if available'"</span>)
+</code></pre>
+      <h3 id="7-5-outer-join">7.5 Outer Join</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== OUTER JOIN (FULL JOIN) ==="</span>)
+
+# Outer <span class="hljs-keyword">join</span>: Keep <span class="hljs-keyword">all</span> records from both tables
+outer_result = pd.merge(patients, treatments, <span class="hljs-keyword">on</span>=<span class="hljs-string">'patient_id'</span>, how=<span class="hljs-string">'outer'</span>)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"OUTER JOIN Result:"</span>)
+<span class="hljs-keyword">print</span>(outer_result)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Explanation:"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - Result has {len(outer_result)} rows"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - All patients AND all treatments included"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P005 included (NaN in treatment columns)"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - P006 included (NaN in patient columns)"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"  - Useful for: 'Show everything, identify orphaned records'"</span>)
+</code></pre>
+      <h3 id="7-6-visual-comparison-of-join-types">
+        7.6 Visual Comparison of Join Types
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== COMPARISON OF ALL JOIN TYPES ==="</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Summary:"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"{'Join Type':&lt;15} {'Rows':&lt;8} {'Description'}"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">70</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"{'INNER':&lt;15} {len(inner_result):&lt;8} Only matching records"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"{'LEFT':&lt;15} {len(left_result):&lt;8} All patients + matching treatments"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"{'RIGHT':&lt;15} {len(right_result):&lt;8} All treatments + matching patients"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"{'OUTER':&lt;15} {len(outer_result):&lt;8} All records from both tables"</span>)
+<span class="hljs-built_in">print</span>()
+
+# Check <span class="hljs-built_in">for</span> missing data
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Missing Data Check:"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  LEFT join - NaN in treatment columns: {left_result['treatment_id'].isna().sum()}"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  RIGHT join - NaN in patient columns: {right_result['name'].isna().sum()}"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  OUTER join - Total NaN: {outer_result.isna().sum().sum()}"</span>)
+</code></pre>
+      <h3 id="7-7-practical-example-patient-treatment-analysis">
+        7.7 Practical Example: Patient Treatment Analysis
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== PRACTICAL: PATIENT TREATMENT ANALYSIS ==="</span>)
+
+# Use <span class="hljs-keyword">left</span> <span class="hljs-keyword">join</span> <span class="hljs-keyword">to</span> analyze <span class="hljs-keyword">all</span> patients
+analysis = pd.merge(patients, treatments, <span class="hljs-keyword">on</span>=<span class="hljs-string">'patient_id'</span>, how=<span class="hljs-string">'left'</span>)
+
+# Calculate statistics
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Patient Treatment Statistics:"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"Total patients: {len(patients)}"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"Patients with treatments: {analysis['treatment_id'].notna().sum()}"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-keyword">f</span><span class="hljs-string">"Patients without treatments: {analysis['treatment_id'].isna().sum()}"</span>)
+<span class="hljs-keyword">print</span>()
+
+# Aggregate costs by patient
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Total cost by patient:"</span>)
+cost_by_patient = analysis.groupby([<span class="hljs-string">'patient_id'</span>, <span class="hljs-string">'name'</span>])[<span class="hljs-string">'cost'</span>].agg([<span class="hljs-string">'sum'</span>, <span class="hljs-string">'count'</span>]).fillna(<span class="hljs-number">0</span>)
+cost_by_patient.columns = [<span class="hljs-string">'Total_Cost'</span>, <span class="hljs-string">'Visit_Count'</span>]
+<span class="hljs-keyword">print</span>(cost_by_patient)
+<span class="hljs-keyword">print</span>()
+
+# Identify patients needing follow-<span class="hljs-keyword">up</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"🚨 Patients without recent treatment (need follow-up):"</span>)
+no_treatment = analysis[analysis[<span class="hljs-string">'treatment_id'</span>].isna()][[<span class="hljs-string">'patient_id'</span>, <span class="hljs-string">'name'</span>, <span class="hljs-string">'age'</span>, <span class="hljs-string">'city'</span>]]
+<span class="hljs-keyword">print</span>(no_treatment)
+</code></pre>
+      <h3 id="7-8-merging-on-multiple-keys">7.8 Merging on Multiple Keys</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== MERGING ON MULTIPLE KEYS ==="</span>)
+
+# Create lab results data with multiple <span class="hljs-built_in">keys</span>
+lab_results_data = {
+    <span class="hljs-string">'patient_id'</span>: [<span class="hljs-string">'P001'</span>, <span class="hljs-string">'P001'</span>, <span class="hljs-string">'P002'</span>, <span class="hljs-string">'P003'</span>],
+    <span class="hljs-string">'date'</span>: [<span class="hljs-string">'2024-01-15'</span>, <span class="hljs-string">'2024-01-20'</span>, <span class="hljs-string">'2024-01-16'</span>, <span class="hljs-string">'2024-01-18'</span>],
+    <span class="hljs-string">'glucose'</span>: [<span class="hljs-number">180</span>, <span class="hljs-number">165</span>, <span class="hljs-number">190</span>, <span class="hljs-number">95</span>],
+    <span class="hljs-string">'cholesterol'</span>: [<span class="hljs-number">250</span>, <span class="hljs-number">240</span>, <span class="hljs-number">270</span>, <span class="hljs-number">200</span>]
+}
+lab_results = pd.DataFrame(lab_results_data)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"LAB RESULTS:"</span>)
+<span class="hljs-keyword">print</span>(lab_results)
+<span class="hljs-keyword">print</span>()
+
+# Merge <span class="hljs-keyword">on</span> multiple <span class="hljs-built_in">keys</span>
+merged = pd.merge(treatments, lab_results, <span class="hljs-keyword">on</span>=[<span class="hljs-string">'patient_id'</span>, <span class="hljs-string">'date'</span>], how=<span class="hljs-string">'inner'</span>)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"MERGED (treatments + lab results on patient_id AND date):"</span>)
+<span class="hljs-keyword">print</span>(merged)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Result: Only treatments with matching lab results on same date"</span>)
+</code></pre>
+      <p><strong>Key Takeaway Merge &amp; Join:</strong></p>
+      <ul>
+        <li><code>how=&#39;inner&#39;</code> = only matches</li>
+        <li><code>how=&#39;left&#39;</code> = all from left table</li>
+        <li><code>how=&#39;right&#39;</code> = all from right table</li>
+        <li><code>how=&#39;outer&#39;</code> = all from both tables</li>
+        <li>Choose based on your analysis needs!</li>
+      </ul>
+      <hr />
+      <h2 id="8-complete-analysis-workflow">8. Complete Analysis Workflow</h2>
+      <h3 id="8-1-scenario-multi-source-healthcare-data-integration">
+        8.1 Scenario: Multi-Source Healthcare Data Integration
+      </h3>
+      <pre><code class="lang-python">print(<span class="hljs-string">"=== COMPLETE WORKFLOW SCENARIO ==="</span>)
+print(<span class="hljs-string">"""
+SCENARIO: RS Sehat Sentosa Analytics
+-------------------------------------
+You are a Health Information Manager at RS Sehat Sentosa.
+Your task: Integrate data from 3 sources to generate insights
+
+Data Sources:
+1. patients.csv - Patient demographics
+2. lab_results.csv - Laboratory test results
+3. billing.csv - Treatment costs and billing
+
+Goal: Create comprehensive patient health report with financial analysis
+"""</span>)
+
+<span class="hljs-comment"># Create sample data for all three sources</span>
+<span class="hljs-comment"># 1. Patients data</span>
+patients = pd.DataFrame({
+    <span class="hljs-string">'patient_id'</span>: [<span class="hljs-string">'P001'</span>, <span class="hljs-string">'P002'</span>, <span class="hljs-string">'P003'</span>, <span class="hljs-string">'P004'</span>, <span class="hljs-string">'P005'</span>],
+    <span class="hljs-string">'name'</span>: [<span class="hljs-string">'Ahmad Rizky'</span>, <span class="hljs-string">'Sari Dewi'</span>, <span class="hljs-string">'Budi Santoso'</span>, <span class="hljs-string">'Nina Wulan'</span>, <span class="hljs-string">'Eko Prasetyo'</span>],
+    <span class="hljs-string">'age'</span>: [<span class="hljs-number">28</span>, <span class="hljs-number">35</span>, <span class="hljs-number">42</span>, <span class="hljs-number">29</span>, <span class="hljs-number">38</span>],
+    <span class="hljs-string">'gender'</span>: [<span class="hljs-string">'M'</span>, <span class="hljs-string">'F'</span>, <span class="hljs-string">'M'</span>, <span class="hljs-string">'F'</span>, <span class="hljs-string">'M'</span>],
+    <span class="hljs-string">'insurance'</span>: [<span class="hljs-string">'BPJS'</span>, <span class="hljs-string">'Private'</span>, <span class="hljs-string">'BPJS'</span>, <span class="hljs-string">'Private'</span>, <span class="hljs-string">'BPJS'</span>]
+})
+
+<span class="hljs-comment"># 2. Lab results data</span>
+lab_results = pd.DataFrame({
+    <span class="hljs-string">'lab_id'</span>: [<span class="hljs-string">'L001'</span>, <span class="hljs-string">'L002'</span>, <span class="hljs-string">'L003'</span>, <span class="hljs-string">'L004'</span>, <span class="hljs-string">'L005'</span>, <span class="hljs-string">'L006'</span>],
+    <span class="hljs-string">'patient_id'</span>: [<span class="hljs-string">'P001'</span>, <span class="hljs-string">'P001'</span>, <span class="hljs-string">'P002'</span>, <span class="hljs-string">'P003'</span>, <span class="hljs-string">'P004'</span>, <span class="hljs-string">'P005'</span>],
+    <span class="hljs-string">'test_date'</span>: [<span class="hljs-string">'2024-01-15'</span>, <span class="hljs-string">'2024-02-15'</span>, <span class="hljs-string">'2024-01-16'</span>, <span class="hljs-string">'2024-01-18'</span>, <span class="hljs-string">'2024-01-19'</span>, <span class="hljs-string">'2024-01-20'</span>],
+    <span class="hljs-string">'glucose'</span>: [<span class="hljs-number">180</span>, <span class="hljs-number">165</span>, <span class="hljs-number">190</span>, <span class="hljs-number">95</span>, <span class="hljs-number">140</span>, <span class="hljs-number">200</span>],
+    <span class="hljs-string">'cholesterol'</span>: [<span class="hljs-number">250</span>, <span class="hljs-number">240</span>, <span class="hljs-number">270</span>, <span class="hljs-number">200</span>, <span class="hljs-number">230</span>, <span class="hljs-number">280</span>],
+    <span class="hljs-string">'diagnosis'</span>: [<span class="hljs-string">'Diabetes'</span>, <span class="hljs-string">'Diabetes'</span>, <span class="hljs-string">'Diabetes'</span>, <span class="hljs-string">'Normal'</span>, <span class="hljs-string">'Pre-Diabetes'</span>, <span class="hljs-string">'Diabetes'</span>]
+})
+
+<span class="hljs-comment"># 3. Billing data</span>
+billing = pd.DataFrame({
+    <span class="hljs-string">'bill_id'</span>: [<span class="hljs-string">'B001'</span>, <span class="hljs-string">'B002'</span>, <span class="hljs-string">'B003'</span>, <span class="hljs-string">'B004'</span>, <span class="hljs-string">'B005'</span>],
+    <span class="hljs-string">'patient_id'</span>: [<span class="hljs-string">'P001'</span>, <span class="hljs-string">'P002'</span>, <span class="hljs-string">'P003'</span>, <span class="hljs-string">'P004'</span>, <span class="hljs-string">'P005'</span>],
+    <span class="hljs-string">'total_cost'</span>: [<span class="hljs-number">2500000</span>, <span class="hljs-number">3000000</span>, <span class="hljs-number">800000</span>, <span class="hljs-number">1500000</span>, <span class="hljs-number">3500000</span>],
+    <span class="hljs-string">'insurance_covered'</span>: [<span class="hljs-number">2000000</span>, <span class="hljs-number">0</span>, <span class="hljs-number">800000</span>, <span class="hljs-number">0</span>, <span class="hljs-number">3000000</span>],
+    <span class="hljs-string">'patient_payment'</span>: [<span class="hljs-number">500000</span>, <span class="hljs-number">3000000</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1500000</span>, <span class="hljs-number">500000</span>]
+})
+
+print(<span class="hljs-string">"✅ Data sources loaded successfully"</span>)
+print(f<span class="hljs-string">"   - Patients: {len(patients)} records"</span>)
+print(f<span class="hljs-string">"   - Lab Results: {len(lab_results)} records"</span>)
+print(f<span class="hljs-string">"   - Billing: {len(billing)} records"</span>)
+</code></pre>
+      <h3 id="8-2-step-1-load-and-explore">8.2 Step 1: Load and Explore</h3>
+      <pre><code class="lang-python"><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-string">"\n=== STEP 1: LOAD AND EXPLORE ==="</span>)</span></span>
+
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-string">"\nPatients Preview:"</span>)</span></span>
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(patients.head()</span></span>)
+
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-string">"\nLab Results Preview:"</span>)</span></span>
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(lab_results.head()</span></span>)
+
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-string">"\nBilling Preview:"</span>)</span></span>
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(billing.head()</span></span>)
+
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-string">"\nData Quality Check:"</span>)</span></span>
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(f<span class="hljs-string">"  Patients missing values: {patients.isnull().sum().sum()}"</span>)</span></span>
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(f<span class="hljs-string">"  Lab Results missing values: {lab_results.isnull().sum().sum()}"</span>)</span></span>
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(f<span class="hljs-string">"  Billing missing values: {billing.isnull().sum().sum()}"</span>)</span></span>
+</code></pre>
+      <h3 id="8-3-step-2-clean-data">8.3 Step 2: Clean Data</h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== STEP 2: CLEAN DATA ==="</span>)
+
+<span class="hljs-comment"># Convert date columns</span>
+lab_results[<span class="hljs-string">'test_date'</span>] = pd.to_datetime(lab_results[<span class="hljs-string">'test_date'</span>])
+
+<span class="hljs-comment"># Check for impossible values</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Checking for data anomalies:"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  Glucose range: {lab_results['glucose'].min()} - {lab_results['glucose'].max()}"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  Cholesterol range: {lab_results['cholesterol'].min()} - {lab_results['cholesterol'].max()}"</span>)
+
+<span class="hljs-comment"># Flag abnormal values</span>
+lab_results[<span class="hljs-string">'high_glucose'</span>] = lab_results[<span class="hljs-string">'glucose'</span>] &gt; 140
+lab_results[<span class="hljs-string">'high_cholesterol'</span>] = lab_results[<span class="hljs-string">'cholesterol'</span>] &gt; 240
+
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  Patients with high glucose: {lab_results['high_glucose'].sum()}"</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  Patients with high cholesterol: {lab_results['high_cholesterol'].sum()}"</span>)
+</code></pre>
+      <h3 id="8-4-step-3-merge-all-data-sources">
+        8.4 Step 3: Merge All Data Sources
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">"\n=== STEP 3: MERGE ALL DATA SOURCES ==="</span>)
+
+<span class="hljs-comment"># Step 3a: Merge patients with lab results</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Merging patients + lab results..."</span>)
+patient_lab = pd.merge(patients, lab_results, <span class="hljs-literal">on</span>=<span class="hljs-string">'patient_id'</span>, how=<span class="hljs-string">'left'</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  Result: {len(patient_lab)} records"</span>)
+
+<span class="hljs-comment"># Step 3b: Merge with billing</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Merging with billing data..."</span>)
+complete_data = pd.merge(patient_lab, billing, <span class="hljs-literal">on</span>=<span class="hljs-string">'patient_id'</span>, how=<span class="hljs-string">'left'</span>)
+<span class="hljs-built_in">print</span>(f<span class="hljs-string">"  Result: {len(complete_data)} records"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\nComplete dataset preview:"</span>)
+<span class="hljs-built_in">print</span>(complete_data.head())
+</code></pre>
+      <h3 id="8-5-step-4-analyze-and-generate-insights">
+        8.5 Step 4: Analyze and Generate Insights
+      </h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== STEP 4: ANALYZE AND GENERATE INSIGHTS ==="</span>)
+
+# Insight <span class="hljs-number">1</span>: Financial analysis by insurance <span class="hljs-built_in">type</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"💰 FINANCIAL ANALYSIS BY INSURANCE:"</span>)
+financial_summary = complete_data.groupby(<span class="hljs-string">'insurance'</span>).agg({
+    <span class="hljs-string">'total_cost'</span>: <span class="hljs-string">'sum'</span>,
+    <span class="hljs-string">'insurance_covered'</span>: <span class="hljs-string">'sum'</span>,
+    <span class="hljs-string">'patient_payment'</span>: <span class="hljs-string">'sum'</span>,
+    <span class="hljs-string">'patient_id'</span>: <span class="hljs-string">'nunique'</span>
+}).<span class="hljs-built_in">round</span>(<span class="hljs-number">0</span>)
+financial_summary.columns = [<span class="hljs-string">'Total_Cost'</span>, <span class="hljs-string">'Insurance_Covered'</span>, <span class="hljs-string">'Patient_Payment'</span>, <span class="hljs-string">'Unique_Patients'</span>]
+<span class="hljs-keyword">print</span>(financial_summary)
+<span class="hljs-keyword">print</span>()
+
+# Insight <span class="hljs-number">2</span>: Clinical <span class="hljs-keyword">profile</span> by diagnosis
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"🏥 CLINICAL PROFILE BY DIAGNOSIS:"</span>)
+clinical_summary = complete_data.groupby(<span class="hljs-string">'diagnosis'</span>).agg({
+    <span class="hljs-string">'glucose'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'cholesterol'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'age'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'total_cost'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'patient_id'</span>: <span class="hljs-string">'count'</span>
+}).<span class="hljs-built_in">round</span>(<span class="hljs-number">2</span>)
+clinical_summary.columns = [<span class="hljs-string">'Avg_Glucose'</span>, <span class="hljs-string">'Avg_Cholesterol'</span>, <span class="hljs-string">'Avg_Age'</span>, <span class="hljs-string">'Avg_Cost'</span>, <span class="hljs-string">'Count'</span>]
+<span class="hljs-keyword">print</span>(clinical_summary)
+<span class="hljs-keyword">print</span>()
+
+# Insight <span class="hljs-number">3</span>: High-risk patients
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"🚨 HIGH-RISK PATIENTS:"</span>)
+high_risk = complete_data[
+    (complete_data[<span class="hljs-string">'glucose'</span>] &gt; <span class="hljs-number">180</span>) | 
+    (complete_data[<span class="hljs-string">'cholesterol'</span>] &gt; <span class="hljs-number">260</span>)
+][[<span class="hljs-string">'patient_id'</span>, <span class="hljs-string">'name'</span>, <span class="hljs-string">'age'</span>, <span class="hljs-string">'glucose'</span>, <span class="hljs-string">'cholesterol'</span>, <span class="hljs-string">'diagnosis'</span>, <span class="hljs-string">'total_cost'</span>]]
+<span class="hljs-keyword">print</span>(high_risk)
+<span class="hljs-keyword">print</span>()
+
+# Insight <span class="hljs-number">4</span>: Cost efficiency by insurance
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"📊 COST EFFICIENCY:"</span>)
+complete_data[<span class="hljs-string">'insurance_coverage_pct'</span>] = (complete_data[<span class="hljs-string">'insurance_covered'</span>] / complete_data[<span class="hljs-string">'total_cost'</span>] * <span class="hljs-number">100</span>).<span class="hljs-built_in">round</span>(<span class="hljs-number">1</span>)
+efficiency = complete_data.groupby(<span class="hljs-string">'insurance'</span>)[<span class="hljs-string">'insurance_coverage_pct'</span>].agg([<span class="hljs-string">'mean'</span>, <span class="hljs-string">'min'</span>, <span class="hljs-string">'max'</span>]).<span class="hljs-built_in">round</span>(<span class="hljs-number">1</span>)
+<span class="hljs-keyword">print</span>(efficiency)
+</code></pre>
+      <h3 id="8-6-step-5-generate-reports">8.6 Step 5: Generate Reports</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== STEP 5: GENERATE REPORTS ==="</span>)
+
+<span class="hljs-comment"># Report 1: Executive Summary</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"EXECUTIVE SUMMARY REPORT"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"="</span> * <span class="hljs-number">60</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Total Patients Analyzed: {complete_data['patient_id'].nunique()}"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Total Revenue: Rp {complete_data['total_cost'].sum():,.0f}"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Insurance Coverage: Rp {complete_data['insurance_covered'].sum():,.0f}"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Patient Out-of-Pocket: Rp {complete_data['patient_payment'].sum():,.0f}"</span>)
+<span class="hljs-keyword">print</span>()
+
+diabetes_rate = (complete_data[<span class="hljs-string">'diagnosis'</span>].str.contains(<span class="hljs-string">'Diabetes'</span>, na=<span class="hljs-keyword">False</span>).sum() / len(complete_data) * <span class="hljs-number">100</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Diabetes Prevalence: {diabetes_rate:.1f}%"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Average Glucose: {complete_data['glucose'].mean():.1f} mg/dL"</span>)
+<span class="hljs-keyword">print</span>(f<span class="hljs-string">"Average Cholesterol: {complete_data['cholesterol'].mean():.1f} mg/dL"</span>)
+<span class="hljs-keyword">print</span>()
+
+<span class="hljs-comment"># Report 2: Patient-Level Report</span>
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"PATIENT-LEVEL REPORT (Top 3 by cost):"</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">60</span>)
+patient_report = complete_data.groupby([<span class="hljs-string">'patient_id'</span>, <span class="hljs-string">'name'</span>]).agg({
+    <span class="hljs-string">'total_cost'</span>: <span class="hljs-string">'sum'</span>,
+    <span class="hljs-string">'glucose'</span>: <span class="hljs-string">'max'</span>,
+    <span class="hljs-string">'diagnosis'</span>: <span class="hljs-string">'first'</span>
+}).sort_values(<span class="hljs-string">'total_cost'</span>, ascending=<span class="hljs-keyword">False</span>).head(<span class="hljs-number">3</span>)
+<span class="hljs-keyword">print</span>(patient_report)
+</code></pre>
+      <h3 id="8-7-step-6-export-results">8.7 Step 6: Export Results</h3>
+      <pre><code class="lang-python"><span class="hljs-keyword">print</span>(<span class="hljs-string">"\n=== STEP 6: EXPORT RESULTS ==="</span>)
+
+<span class="hljs-comment"># Export complete integrated data</span>
+complete_data.to_csv(<span class="hljs-string">'complete_patient_analysis.csv'</span>, <span class="hljs-keyword">index</span>=False)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"✅ Complete data exported: complete_patient_analysis.csv"</span>)
+
+<span class="hljs-comment"># Export summary reports</span>
+financial_summary.to_csv(<span class="hljs-string">'financial_summary.csv'</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"✅ Financial summary exported: financial_summary.csv"</span>)
+
+clinical_summary.to_csv(<span class="hljs-string">'clinical_summary.csv'</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"✅ Clinical summary exported: clinical_summary.csv"</span>)
+
+<span class="hljs-comment"># Export high-risk patients for follow-up</span>
+high_risk.to_csv(<span class="hljs-string">'high_risk_patients.csv'</span>, <span class="hljs-keyword">index</span>=False)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"✅ High-risk patients exported: high_risk_patients.csv"</span>)
+
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"\n🎉 Analysis complete! All reports generated."</span>)
+</code></pre>
+      <h3 id="8-8-complete-workflow-summary">8.8 Complete Workflow Summary</h3>
+      <pre><code class="lang-python">print("\n=== COMPLETE WORKFLOW SUMMARY ===")
+
+workflow_steps = """
+PANDAS WORKFLOW FOR HEALTHCARE DATA ANALYSIS:
+────────────────────────────────────────────────
+
+Step 1: <span class="hljs-keyword">LOAD</span>
+  → pd.read_csv() <span class="hljs-keyword">for</span> all <span class="hljs-keyword">data</span> sources
+  → <span class="hljs-keyword">Check</span> shape, <span class="hljs-keyword">columns</span>, dtypes
+
+Step <span class="hljs-number">2</span>: CLEAN
+  → <span class="hljs-keyword">Check</span> <span class="hljs-keyword">missing</span> <span class="hljs-keyword">values</span> (.isnull())
+  → Handle invalid <span class="hljs-keyword">data</span> (<span class="hljs-keyword">replace</span>, <span class="hljs-keyword">drop</span>, fill)
+  → <span class="hljs-keyword">Convert</span> <span class="hljs-keyword">data</span> types (to_datetime, astype)
+  → <span class="hljs-keyword">Create</span> flags/categories (pd.cut, <span class="hljs-built_in">boolean</span> masks)
+
+Step <span class="hljs-number">3</span>: <span class="hljs-keyword">MERGE</span>
+  → Identify common <span class="hljs-keyword">keys</span> (patient_id)
+  → <span class="hljs-keyword">Choose</span> <span class="hljs-keyword">join</span> <span class="hljs-keyword">type</span> (<span class="hljs-keyword">left</span>, <span class="hljs-keyword">inner</span>, <span class="hljs-keyword">outer</span>)
+  → pd.merge() <span class="hljs-keyword">to</span> combine <span class="hljs-keyword">tables</span>
+  → <span class="hljs-keyword">Verify</span> merged <span class="hljs-keyword">data</span>
+
+Step <span class="hljs-number">4</span>: <span class="hljs-keyword">ANALYZE</span>
+  → GroupBy <span class="hljs-keyword">for</span> aggregations
+  → Filter <span class="hljs-keyword">for</span> specific conditions
+  → Calculate derived metrics
+  → Generate insights
+
+Step <span class="hljs-number">5</span>: REPORT
+  → <span class="hljs-keyword">Create</span> summary <span class="hljs-keyword">statistics</span>
+  → <span class="hljs-keyword">Format</span> outputs
+  → Identify <span class="hljs-keyword">action</span> items
+
+Step <span class="hljs-number">6</span>: <span class="hljs-keyword">EXPORT</span>
+  → <span class="hljs-keyword">Save</span> <span class="hljs-keyword">to</span> CSV (.to_csv())
+  → <span class="hljs-keyword">Document</span> findings
+  → <span class="hljs-keyword">Share</span> <span class="hljs-keyword">with</span> stakeholders
+
+<span class="hljs-keyword">KEY</span> PANDAS FUNCTIONS USED:
+──────────────────────────
+✓ pd.read_csv()          - <span class="hljs-keyword">Load</span> <span class="hljs-keyword">data</span>
+✓ .head(), .info()       - Explore <span class="hljs-keyword">data</span>
+✓ .isnull(), .fillna()   - Clean <span class="hljs-keyword">data</span>
+✓ pd.merge()             - Combine <span class="hljs-keyword">tables</span>
+✓ .groupby()             - <span class="hljs-keyword">Aggregate</span>
+✓ .agg()                 - Multiple aggregations
+✓ <span class="hljs-built_in">Boolean</span> filtering      - Subset <span class="hljs-keyword">data</span>
+✓ .to_csv()              - <span class="hljs-keyword">Export</span> results
+<span class="hljs-string">"""
+
+print(workflow_steps)</span>
+</code></pre>
+      <p><strong>Key Takeaway Complete Workflow:</strong></p>
+      <ul>
+        <li>Real-world data comes from multiple sources</li>
+        <li>Always: Load → Clean → Merge → Analyze → Export</li>
+        <li>Document each step</li>
+        <li>Pandas makes this workflow efficient!</li>
+      </ul>
+      <hr />
+      <h2 id="9-practice-challenge">9. Practice Challenge</h2>
+      <h3 id="challenge-analyze-your-own-healthcare-dataset">
+        Challenge: Analyze Your Own Healthcare Dataset
+      </h3>
+      <pre><code class="lang-python">print("=== PRACTICE CHALLENGE ===")
+
+challenge = """
+🎯 CHALLENGE: Patient Readmission Analysis
+──────────────────────────────────────────
+
+SCENARIO:
+You're given a dataset of hospital readmissions. Your task is to:
+
+1. <span class="hljs-keyword">Load</span> the <span class="hljs-keyword">data</span>
+<span class="hljs-number">2.</span> Clean <span class="hljs-keyword">missing</span> <span class="hljs-keyword">values</span>
+<span class="hljs-number">3.</span> Calculate readmission rates <span class="hljs-keyword">by</span> department
+<span class="hljs-number">4.</span> Identify patients <span class="hljs-keyword">with</span> multiple readmissions
+<span class="hljs-number">5.</span> <span class="hljs-keyword">Analyze</span> <span class="hljs-keyword">cost</span> impact
+<span class="hljs-number">6.</span> Generate actionable insights
+
+DATASET: hospital_readmissions.csv (<span class="hljs-keyword">create</span> <span class="hljs-keyword">sample</span> <span class="hljs-keyword">or</span> <span class="hljs-keyword">use</span> Kaggle)
+
+EXPECTED OUTPUTS:
+├── readmission_rate_by_department.csv
+├── high_readmission_patients.csv
+└── cost_analysis_report.csv
+
+HINTS:
+- <span class="hljs-keyword">Use</span> .groupby() <span class="hljs-keyword">for</span> department analysis
+- <span class="hljs-keyword">Use</span> .value_counts() <span class="hljs-keyword">for</span> readmission frequency
+- <span class="hljs-keyword">Use</span> <span class="hljs-built_in">boolean</span> filtering <span class="hljs-keyword">for</span> <span class="hljs-keyword">high</span>-risk identification
+- <span class="hljs-keyword">Use</span> .merge() <span class="hljs-keyword">if</span> you have multiple <span class="hljs-keyword">tables</span>
+
+BONUS POINTS:
+- <span class="hljs-keyword">Create</span> age categories <span class="hljs-keyword">and</span> <span class="hljs-keyword">analyze</span> <span class="hljs-keyword">by</span> age <span class="hljs-keyword">group</span>
+- Calculate average <span class="hljs-keyword">time</span> <span class="hljs-keyword">between</span> readmissions
+- Identify which diagnosis codes have highest readmission rates
+<span class="hljs-string">"""
+
+print(challenge)</span>
+</code></pre>
+      <hr />
+      <h2 id="10-key-functions-summary-next-steps">
+        10. Key Functions Summary &amp; Next Steps
+      </h2>
+      <h3 id="10-1-essential-pandas-functions-reference">
+        10.1 Essential Pandas Functions Reference
+      </h3>
+      <pre><code class="lang-python">print("=== KEY PANDAS FUNCTIONS REFERENCE ===")
+
+reference = """
+📚 PANDAS CHEAT SHEET FOR HEALTHCARE DATA
+─────────────────────────────────────────────
+
+LOADING DATA:
+  pd.read_csv('file.csv')              <span class="hljs-keyword">Load</span> CSV <span class="hljs-keyword">file</span>
+  pd.read_excel(<span class="hljs-string">'file.xlsx'</span>)           <span class="hljs-keyword">Load</span> Excel <span class="hljs-keyword">file</span>
+
+EXPLORING <span class="hljs-keyword">DATA</span>:
+  df.head(n)                           <span class="hljs-keyword">First</span> n <span class="hljs-keyword">rows</span>
+  df.tail(n)                           <span class="hljs-keyword">Last</span> n <span class="hljs-keyword">rows</span>
+  df.info()                            <span class="hljs-keyword">Data</span> types <span class="hljs-keyword">and</span> <span class="hljs-keyword">missing</span> <span class="hljs-keyword">values</span>
+  df.describe()                        Statistical summary
+  df.shape                             (<span class="hljs-keyword">rows</span>, <span class="hljs-keyword">columns</span>)
+  df.columns                           <span class="hljs-keyword">Column</span> <span class="hljs-keyword">names</span>
+
+SELECTING <span class="hljs-keyword">DATA</span>:
+  df[<span class="hljs-string">'column'</span>]                         Single <span class="hljs-keyword">column</span> (Series)
+  df[[<span class="hljs-string">'col1'</span>, <span class="hljs-string">'col2'</span>]]                Multiple <span class="hljs-keyword">columns</span> (DataFrame)
+  df.loc[<span class="hljs-keyword">rows</span>, <span class="hljs-keyword">columns</span>]                Selection <span class="hljs-keyword">by</span> label
+  df.iloc[<span class="hljs-keyword">rows</span>, <span class="hljs-keyword">columns</span>]               Selection <span class="hljs-keyword">by</span> <span class="hljs-keyword">position</span>
+  df[df[<span class="hljs-string">'col'</span>] &gt; <span class="hljs-keyword">value</span>]                <span class="hljs-built_in">Boolean</span> filtering
+
+CLEANING <span class="hljs-keyword">DATA</span>:
+  df.isnull()                          <span class="hljs-keyword">Check</span> <span class="hljs-keyword">missing</span> <span class="hljs-keyword">values</span>
+  df.isnull().sum()                    <span class="hljs-keyword">Count</span> <span class="hljs-keyword">missing</span> per <span class="hljs-keyword">column</span>
+  df.dropna()                          <span class="hljs-keyword">Drop</span> <span class="hljs-keyword">rows</span> <span class="hljs-keyword">with</span> <span class="hljs-keyword">missing</span>
+  df.fillna(<span class="hljs-keyword">value</span>)                     Fill <span class="hljs-keyword">missing</span> <span class="hljs-keyword">values</span>
+  df.replace(<span class="hljs-keyword">old</span>, <span class="hljs-keyword">new</span>)                 <span class="hljs-keyword">Replace</span> <span class="hljs-keyword">values</span>
+
+AGGREGATING <span class="hljs-keyword">DATA</span>:
+  df.groupby(<span class="hljs-string">'column'</span>)                 <span class="hljs-keyword">Group</span> <span class="hljs-keyword">by</span> <span class="hljs-keyword">category</span>
+  df.groupby(<span class="hljs-string">'col'</span>)[<span class="hljs-string">'val'</span>].mean()      <span class="hljs-keyword">Group</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">aggregate</span>
+  df.groupby(<span class="hljs-string">'col'</span>).agg([<span class="hljs-string">'mean'</span>, <span class="hljs-string">'sum'</span>]) Multiple aggregations
+  df.pivot_table()                     Excel-<span class="hljs-keyword">style</span> <span class="hljs-keyword">pivot</span> <span class="hljs-keyword">table</span>
+
+COMBINING <span class="hljs-keyword">DATA</span>:
+  pd.merge(df1, df2, <span class="hljs-keyword">on</span>=<span class="hljs-string">'key'</span>)         <span class="hljs-keyword">Merge</span> two DataFrames
+  pd.merge(..., how=<span class="hljs-string">'inner'</span>)           <span class="hljs-keyword">Inner</span> <span class="hljs-keyword">join</span>
+  pd.merge(..., how=<span class="hljs-string">'left'</span>)            <span class="hljs-keyword">Left</span> <span class="hljs-keyword">join</span>
+  pd.merge(..., how=<span class="hljs-string">'right'</span>)           <span class="hljs-keyword">Right</span> <span class="hljs-keyword">join</span>
+  pd.merge(..., how=<span class="hljs-string">'outer'</span>)           <span class="hljs-keyword">Outer</span> <span class="hljs-keyword">join</span>
+
+EXPORTING <span class="hljs-keyword">DATA</span>:
+  df.to_csv(<span class="hljs-string">'file.csv'</span>)                <span class="hljs-keyword">Export</span> <span class="hljs-keyword">to</span> CSV
+  df.to_csv(<span class="hljs-string">'file.csv'</span>, <span class="hljs-keyword">index</span>=<span class="hljs-literal">False</span>)   <span class="hljs-keyword">Export</span> <span class="hljs-keyword">without</span> <span class="hljs-keyword">index</span>
+  df.to_excel(<span class="hljs-string">'file.xlsx'</span>)             <span class="hljs-keyword">Export</span> <span class="hljs-keyword">to</span> Excel
+
+USEFUL <span class="hljs-keyword">OPERATIONS</span>:
+  df.value_counts()                    <span class="hljs-keyword">Count</span> <span class="hljs-keyword">unique</span> <span class="hljs-keyword">values</span>
+  df.sort_values(<span class="hljs-string">'col'</span>)                <span class="hljs-keyword">Sort</span> <span class="hljs-keyword">by</span> <span class="hljs-keyword">column</span>
+  df.drop(<span class="hljs-string">'col'</span>, axis=<span class="hljs-number">1</span>)               <span class="hljs-keyword">Drop</span> <span class="hljs-keyword">column</span>
+  df.rename(<span class="hljs-keyword">columns</span>={<span class="hljs-string">'old'</span>:<span class="hljs-string">'new'</span>})     <span class="hljs-keyword">Rename</span> <span class="hljs-keyword">columns</span>
+  pd.cut(df[<span class="hljs-string">'col'</span>], bins, labels)      <span class="hljs-keyword">Create</span> categories
+<span class="hljs-string">"""
+
+print(reference)</span>
+</code></pre>
+      <h3 id="10-2-common-healthcare-use-cases">
+        10.2 Common Healthcare Use Cases
+      </h3>
+      <pre><code class="lang-python">print("\n=== COMMON HEALTHCARE <span class="hljs-keyword">USE</span> CASES ===<span class="hljs-string">")
+
+use_cases = """</span>
+🏥 PANDAS <span class="hljs-keyword">IN</span> HEALTHCARE: <span class="hljs-built_in">REAL</span>-WORLD APPLICATIONS
+────────────────────────────────────────────────
+
+<span class="hljs-number">1.</span> PATIENT DEMOGRAPHICS ANALYSIS
+   └─ <span class="hljs-keyword">Load</span> patient registry → <span class="hljs-keyword">Group</span> <span class="hljs-keyword">by</span> age/gender → Calculate <span class="hljs-keyword">statistics</span>
+
+<span class="hljs-number">2.</span> DISEASE SURVEILLANCE
+   └─ <span class="hljs-keyword">Load</span> diagnosis codes → Filter <span class="hljs-keyword">by</span> disease → Track trends <span class="hljs-keyword">over</span> <span class="hljs-keyword">time</span>
+
+<span class="hljs-number">3.</span> LAB RESULTS <span class="hljs-keyword">MONITORING</span>
+   └─ <span class="hljs-keyword">Load</span> lab <span class="hljs-keyword">data</span> → Flag abnormal <span class="hljs-keyword">values</span> → Identify <span class="hljs-keyword">high</span>-risk patients
+
+<span class="hljs-number">4.</span> BILLING &amp; REVENUE ANALYSIS
+   └─ <span class="hljs-keyword">Load</span> billing <span class="hljs-keyword">records</span> → <span class="hljs-keyword">Group</span> <span class="hljs-keyword">by</span> department → Calculate revenue
+
+<span class="hljs-number">5.</span> READMISSION ANALYSIS
+   └─ <span class="hljs-keyword">Merge</span> admission <span class="hljs-keyword">records</span> → Calculate <span class="hljs-keyword">time</span> <span class="hljs-keyword">between</span> visits → Identify patterns
+
+<span class="hljs-number">6.</span> CLINICAL TRIAL <span class="hljs-keyword">DATA</span>
+   └─ <span class="hljs-keyword">Load</span> patient outcomes → <span class="hljs-keyword">Group</span> <span class="hljs-keyword">by</span> treatment → Compare effectiveness
+
+<span class="hljs-number">7.</span> PHARMACY INVENTORY
+   └─ <span class="hljs-keyword">Load</span> medication <span class="hljs-keyword">data</span> → Track <span class="hljs-keyword">usage</span> → Predict needs
+
+<span class="hljs-number">8.</span> APPOINTMENT SCHEDULING
+   └─ <span class="hljs-keyword">Load</span> appointment <span class="hljs-keyword">data</span> → <span class="hljs-keyword">Analyze</span> <span class="hljs-keyword">no</span>-shows → <span class="hljs-keyword">Optimize</span> scheduling
+
+<span class="hljs-number">9.</span> QUALITY METRICS
+   └─ <span class="hljs-keyword">Load</span> clinical indicators → Calculate <span class="hljs-keyword">performance</span> → Generate dashboards
+
+<span class="hljs-number">10.</span> EPIDEMIOLOGICAL RESEARCH
+    └─ Combine multiple sources → Statistical analysis → Publication-ready reports
+<span class="hljs-string">"""
+
+print(use_cases)</span>
+</code></pre>
+      <h3 id="10-3-best-practices">10.3 Best Practices</h3>
+      <pre><code class="lang-python">print("\n=== BEST PRACTICES ===")
+
+best_practices = """
+✅ PANDAS BEST PRACTICES FOR HEALTHCARE DATA
+────────────────────────────────────────────
+
+1. DATA PRIVACY &amp; SECURITY
+   ✓ Never <span class="hljs-keyword">commit</span> <span class="hljs-built_in">real</span> patient <span class="hljs-keyword">data</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">version</span> control
+   ✓ <span class="hljs-keyword">Use</span> anonymized/synthetic <span class="hljs-keyword">data</span> <span class="hljs-keyword">for</span> practice
+   ✓ Follow HIPAA/<span class="hljs-keyword">local</span> privacy regulations
+   ✓ <span class="hljs-keyword">Use</span> patient_id, <span class="hljs-keyword">not</span> <span class="hljs-keyword">names</span>, <span class="hljs-keyword">as</span> <span class="hljs-keyword">keys</span>
+
+<span class="hljs-number">2.</span> <span class="hljs-keyword">DATA</span> QUALITY
+   ✓ <span class="hljs-keyword">Always</span> <span class="hljs-keyword">check</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">missing</span> <span class="hljs-keyword">values</span> <span class="hljs-keyword">first</span>
+   ✓ <span class="hljs-keyword">Document</span> your cleaning decisions
+   ✓ <span class="hljs-keyword">Validate</span> <span class="hljs-keyword">data</span> ranges (age &gt; <span class="hljs-number">0</span>, glucose &gt; <span class="hljs-number">0</span>)
+   ✓ <span class="hljs-keyword">Check</span> <span class="hljs-keyword">for</span> duplicates
+
+<span class="hljs-number">3.</span> CODE <span class="hljs-keyword">ORGANIZATION</span>
+   ✓ <span class="hljs-keyword">Use</span> meaningful <span class="hljs-keyword">variable</span> <span class="hljs-keyword">names</span> (df_patients, <span class="hljs-keyword">not</span> df1)
+   ✓ <span class="hljs-keyword">Comment</span> your logic
+   ✓ Break complex <span class="hljs-keyword">operations</span> <span class="hljs-keyword">into</span> steps
+   ✓ <span class="hljs-keyword">Save</span> intermediate results
+
+<span class="hljs-number">4.</span> <span class="hljs-keyword">PERFORMANCE</span>
+   ✓ <span class="hljs-keyword">Use</span> vectorized <span class="hljs-keyword">operations</span> (<span class="hljs-keyword">no</span> loops!)
+   ✓ Filter early <span class="hljs-keyword">to</span> reduce <span class="hljs-keyword">data</span> <span class="hljs-keyword">size</span>
+   ✓ <span class="hljs-keyword">Use</span> appropriate dtypes (<span class="hljs-keyword">category</span> <span class="hljs-keyword">for</span> categorical)
+   ✓ <span class="hljs-keyword">Consider</span> chunking <span class="hljs-keyword">for</span> very <span class="hljs-keyword">large</span> files
+
+<span class="hljs-number">5.</span> REPRODUCIBILITY
+   ✓ <span class="hljs-keyword">Save</span> your code <span class="hljs-keyword">in</span> .py files
+   ✓ <span class="hljs-keyword">Use</span> <span class="hljs-keyword">version</span> control (Git)
+   ✓ <span class="hljs-keyword">Document</span> <span class="hljs-keyword">data</span> sources
+   ✓ <span class="hljs-keyword">Include</span> <span class="hljs-keyword">sample</span> outputs
+
+<span class="hljs-number">6.</span> <span class="hljs-keyword">VALIDATION</span>
+   ✓ Sanity <span class="hljs-keyword">check</span> results (<span class="hljs-keyword">do</span> they make sense?)
+   ✓ Compare totals <span class="hljs-keyword">before</span>/<span class="hljs-keyword">after</span> <span class="hljs-keyword">operations</span>
+   ✓ <span class="hljs-keyword">Verify</span> <span class="hljs-keyword">merge</span> results (expected <span class="hljs-keyword">row</span> counts?)
+   ✓ <span class="hljs-keyword">Cross</span>-<span class="hljs-keyword">check</span> <span class="hljs-keyword">with</span> <span class="hljs-keyword">domain</span> experts
+<span class="hljs-string">"""
+
+print(best_practices)</span>
+</code></pre>
+      <h3 id="10-4-next-steps">10.4 Next Steps</h3>
+      <pre><code class="lang-python">print("\n=== NEXT STEPS ===")
+
+next_steps = """
+🚀 WHAT'S NEXT AFTER THIS MODULE?
+─────────────────────────────────
+
+IMMEDIATE PRACTICE (Week 12-13):
+<span class="hljs-bullet">1. </span>Complete the practice challenge
+<span class="hljs-bullet">2. </span>Work with actual Kaggle datasets
+<span class="hljs-bullet">3. </span>Try different join types
+<span class="hljs-bullet">4. </span>Practice groupby with real scenarios
+
+ADVANCED PANDAS (Week 14+):
+<span class="hljs-bullet">1. </span>Time series analysis (patient visits over time)
+<span class="hljs-bullet">2. </span>Multi-index DataFrames (hierarchical data)
+<span class="hljs-bullet">3. </span>Window functions (rolling averages)
+<span class="hljs-bullet">4. </span>Custom aggregation functions
+<span class="hljs-bullet">5. </span>Performance optimization
+
+INTEGRATE WITH OTHER TOOLS:
+<span class="hljs-bullet">1. </span>Matplotlib/Seaborn - Data visualization
+<span class="hljs-bullet">2. </span>Scikit-learn - Machine learning on healthcare data
+<span class="hljs-bullet">3. </span>Streamlit - Build interactive dashboards
+<span class="hljs-bullet">4. </span>SQL - Combine with database queries
+
+REAL PROJECTS TO BUILD:
+<span class="hljs-bullet">1. </span>Patient Risk Prediction Dashboard
+<span class="hljs-bullet">2. </span>Hospital Resource Utilization Report
+<span class="hljs-bullet">3. </span>Disease Outbreak Tracker
+<span class="hljs-bullet">4. </span>Clinical Trial Results Analyzer
+<span class="hljs-bullet">5. </span>Healthcare Cost Optimizer
+
+RESOURCES FOR LEARNING:
+📖 Official Pandas Documentation: pandas.pydata.org
+📊 Kaggle Healthcare Datasets: kaggle.com/datasets
+💻 Practice Platform: leetcode.com/problemset/pandas
+🎓 Free Course: DataCamp Pandas Tutorial
+📺 Video Tutorial: Corey Schafer Pandas Series (YouTube)
+
+REMEMBER:
+"The best way to learn Pandas is by DOING.
+Work with real healthcare datasets and solve real problems!"
+"""
+
+print(next_steps)
+</code></pre>
+      <h3 id="10-5-final-message">10.5 Final Message</h3>
+      <pre><code class="lang-python">print("\n=== FINAL MESSAGE ===")
+
+final_message = """
+🎓 CONGRATULATIONS!
+──────────────────
+
+You've completed Week 12: Pandas for Healthcare Data Analysis!
+
+You now know how to:
+✅ <span class="hljs-keyword">Load</span> <span class="hljs-keyword">and</span> explore CSV <span class="hljs-keyword">data</span> <span class="hljs-keyword">from</span> Kaggle
+✅ Clean <span class="hljs-keyword">and</span> <span class="hljs-keyword">prepare</span> healthcare datasets
+✅ Filter <span class="hljs-keyword">and</span> <span class="hljs-keyword">select</span> <span class="hljs-keyword">data</span> efficiently
+✅ Perform groupby <span class="hljs-keyword">operations</span> <span class="hljs-keyword">for</span> insights
+✅ <span class="hljs-keyword">Merge</span> multiple <span class="hljs-keyword">data</span> sources
+✅ Generate comprehensive analysis reports
+✅ <span class="hljs-keyword">Export</span> results <span class="hljs-keyword">for</span> stakeholders
+
+<span class="hljs-keyword">KEY</span> TAKEAWAY:
+<span class="hljs-string">"Pandas = Excel with Python superpowers!"</span>
+
+You<span class="hljs-string">'re now equipped with the #1 tool used by data scientists
+and health information professionals worldwide.
+
+NEXT CLASS:
+Week 13 - Data Visualization with Pandas &amp; Matplotlib
+         (Turning your analysis into compelling visuals)
+
+HOMEWORK:
+1. Complete practice challenge
+2. Download 1 Kaggle healthcare dataset
+3. Perform end-to-end analysis (Load → Clean → Analyze → Export)
+4. Prepare to present your findings
+
+Keep practicing! 💪
+Remember: Every expert was once a beginner.
+
+─────────────────────────────────────────────────────────────
+Muhammad Oriza Nurfajri, S.Kom., M.IT.
+D4 Manajemen Informasi Kesehatan, Sekolah Vokasi UGM
+─────────────────────────────────────────────────────────────
+"""
+
+print(final_message)</span>
+</code></pre>
+      <hr />
+      <h2 id="appendix-a-quick-reference-card">
+        Appendix A: Quick Reference Card
+      </h2>
+      <pre><code class="lang-python"><span class="hljs-comment"># PANDAS QUICK REFERENCE FOR HEALTHCARE</span>
+<span class="hljs-comment"># ═════════════════════════════════════</span>
+
+<span class="hljs-comment"># LOAD DATA</span>
+import pandas <span class="hljs-keyword">as</span> pd
+df = pd.read_csv(<span class="hljs-string">'patients.csv'</span>)
+
+<span class="hljs-comment"># EXPLORE</span>
+df.head()                    <span class="hljs-comment"># First 5 rows</span>
+df.info()                    <span class="hljs-comment"># Structure</span>
+df.describe()                <span class="hljs-comment"># Statistics</span>
+
+<span class="hljs-comment"># SELECT</span>
+df[<span class="hljs-string">'Age'</span>]                    <span class="hljs-comment"># Single column</span>
+df[[<span class="hljs-string">'Age'</span>, <span class="hljs-string">'Gender'</span>]]        <span class="hljs-comment"># Multiple columns</span>
+df[df[<span class="hljs-string">'Age'</span>] &gt; <span class="hljs-number">30</span>]           <span class="hljs-comment"># Filter</span>
+
+<span class="hljs-comment"># CLEAN</span>
+df.isnull().<span class="hljs-built_in">sum</span>()            <span class="hljs-comment"># Count missing</span>
+df.dropna()                  <span class="hljs-comment"># Drop missing</span>
+df.fillna(<span class="hljs-number">0</span>)                 <span class="hljs-comment"># Fill missing</span>
+
+<span class="hljs-comment"># AGGREGATE</span>
+df.groupby(<span class="hljs-string">'Gender'</span>)[<span class="hljs-string">'Age'</span>].mean()    <span class="hljs-comment"># Group and average</span>
+df.pivot_table(values=<span class="hljs-string">'Cost'</span>, index=<span class="hljs-string">'Department'</span>, aggfunc=<span class="hljs-string">'sum'</span>)
+
+<span class="hljs-comment"># MERGE</span>
+pd.<span class="hljs-built_in">merge</span>(df1, df2, <span class="hljs-keyword">on</span>=<span class="hljs-string">'patient_id'</span>, <span class="hljs-title">how</span>=<span class="hljs-string">'inner'</span>)
+
+<span class="hljs-comment"># EXPORT</span>
+df.to_csv(<span class="hljs-string">'results.csv'</span>, index=False)
+</code></pre>
+      <hr />
+      <h2 id="appendix-b-dataset-download-instructions">
+        Appendix B: Dataset Download Instructions
+      </h2>
+      <pre><code class="lang-markdown"><span class="hljs-comment"># HOW TO DOWNLOAD KAGGLE DATASETS</span>
+
+<span class="hljs-comment">## Option 1: Manual Download (Easiest for beginners)</span>
+<span class="hljs-number">1.</span> Go <span class="hljs-built_in">to</span> Kaggle.com <span class="hljs-keyword">and</span> <span class="hljs-built_in">create</span> free account
+<span class="hljs-number">2.</span> Navigate <span class="hljs-built_in">to</span> dataset page
+<span class="hljs-number">3.</span> Click <span class="hljs-string">"Download"</span> button
+<span class="hljs-number">4.</span> Extract ZIP <span class="hljs-built_in">file</span> <span class="hljs-built_in">to</span> your working <span class="hljs-built_in">directory</span>
+
+<span class="hljs-comment">## Datasets Used in This Module:</span>
+
+<span class="hljs-comment">### 1. Pima Indians Diabetes Database</span>
+<span class="hljs-built_in">URL</span>: <span class="hljs-keyword">https</span>://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database
+File: diabetes.csv
+Size: <span class="hljs-number">768</span> rows × <span class="hljs-number">9</span> columns
+
+<span class="hljs-comment">### 2. Hospital Patient Records</span>
+<span class="hljs-built_in">URL</span>: <span class="hljs-keyword">https</span>://www.kaggle.com/datasets/blueblushed/hospital-dataset-<span class="hljs-keyword">for</span>-practice
+Files: patients.csv, treatments.csv
+Note: May need <span class="hljs-built_in">to</span> find alternative <span class="hljs-keyword">or</span> <span class="hljs-built_in">create</span> synthetic data
+
+<span class="hljs-comment">### 3. Healthcare Datasets (Sample)</span>
+<span class="hljs-built_in">URL</span>: <span class="hljs-keyword">https</span>://www.kaggle.com/datasets/benitoitelewuver/healthcare-datasets-sample
+Files: Multiple CSVs (patients, labs, billing)
+Size: Varies
+
+<span class="hljs-comment">## Option 2: Kaggle API (Advanced)</span>
+```bash
+pip install kaggle
+kaggle datasets download -d uciml/pima-indians-diabetes-database
+unzip pima-indians-diabetes-database.zip
+</code></pre>
+      <h2 id="option-3-direct-url-if-available-">
+        Option 3: Direct URL (If available)
+      </h2>
+      <pre><code class="lang-python"><span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+<span class="hljs-built_in">url</span> = <span class="hljs-string">'https://raw.githubusercontent.com/.../diabetes.csv'</span>
+df = pd.read_csv(<span class="hljs-built_in">url</span>)
+</code></pre>
+      <h2 id="troubleshooting-">Troubleshooting:</h2>
+      <ul>
+        <li>If download fails: Check your Kaggle account is verified</li>
+        <li>
+          If file not found: Ensure CSV is in same directory as your Python
+          script
+        </li>
+        <li>
+          If permission denied: Run Jupyter/Python with appropriate permissions
+          ```
+        </li>
+      </ul>
+      <hr />
+      <h2 id="appendix-c-common-errors-and-solutions">
+        Appendix C: Common Errors and Solutions
+      </h2>
+      <pre><code class="lang-python"># COMMON PANDAS ERRORS AND HOW TO FIX THEM
+# ════════════════════════════════════════
+
+"""
+<span class="hljs-keyword">ERROR </span>1: FileNotFoundError
+──────────────────────────
+<span class="hljs-keyword">Error: </span>FileNotFoundError: [Errno 2] No such file or directory: 'diabetes.csv'
+
+Solution:
+1. Check file is in current directory: import os; print(os.getcwd())
+2. Use full path: df = pd.read_csv('/full/path/to/diabetes.csv')
+3. Or change directory: os.chdir('/path/to/files')
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-keyword">ERROR </span>2: KeyError
+─────────────────
+<span class="hljs-keyword">Error: </span>KeyError: 'Glucose'
+
+Solution:
+1. Check column names: print(df.columns)
+2. Column names are case-sensitive: 'Glucose' ≠ 'glucose'
+3. Check for extra spaces: df.columns = df.columns.str.strip()
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-keyword">ERROR </span>3: ValueError in merge
+────────────────────────────
+<span class="hljs-keyword">Error: </span>ValueError: You are trying to merge on object and int64 columns
+
+Solution:
+1. Convert types before merge: df1['id'] = df1['id'].astype(str)
+2. Check data types: print(df1['id'].dtype, df2['id'].dtype)
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-keyword">ERROR </span>4: SettingWithCopyWarning
+───────────────────────────────
+Warning: A value is trying to be set on a copy of a slice
+
+Solution:
+Use .copy() when creating subset:
+df_subset = df[df['Age'] &gt; 30].copy()
+df_subset['NewCol'] = value
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-keyword">ERROR </span>5: Memory Error
+─────────────────────
+<span class="hljs-keyword">Error: </span>MemoryError: Unable to allocate array
+
+Solution:
+1. Use chunks: for chunk in pd.read_csv('file.csv', chunksize=10000):
+2. Use specific dtypes: df = pd.read_csv('file.csv', dtype={'col': 'int32'})
+3. Select only needed columns: usecols=['col1', 'col2']
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-keyword">ERROR </span>6: TypeError in groupby
+──────────────────────────────
+<span class="hljs-keyword">Error: </span>TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+Solution:
+Check data types in column: print(df['column'].dtype)
+Clean data first: df['column'] = pd.to_numeric(df['column'], errors='coerce')
+"""
+</code></pre>
+      <hr />
+      <h2 id="appendix-d-performance-tips">Appendix D: Performance Tips</h2>
+      <pre><code class="lang-python"># PANDAS PERFORMANCE OPTIMIZATION
+# ════════════════════════════════
+
+<span class="hljs-string">""</span><span class="hljs-comment">"</span>
+🚀 MAKE YOUR PANDAS CODE FASTER
+───────────────────────────────
+
+<span class="hljs-number">1</span>. USE VECTORIZED OPERATIONS (NOT LOOPS!)
+❌ Slo<span class="hljs-variable">w:</span>
+<span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(df)):
+    df.<span class="hljs-keyword">loc</span>[i, <span class="hljs-string">'new_col'</span>] = df.<span class="hljs-keyword">loc</span>[i, <span class="hljs-string">'old_col'</span>] * <span class="hljs-number">2</span>
+
+✅ Fas<span class="hljs-variable">t:</span>
+df[<span class="hljs-string">'new_col'</span>] = df[<span class="hljs-string">'old_col'</span>] * <span class="hljs-number">2</span>
+
+Speed improvemen<span class="hljs-variable">t:</span> <span class="hljs-number">100</span>-<span class="hljs-number">1000</span><span class="hljs-keyword">x</span> faster!
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-number">2</span>. USE APPROPRIATE DATA TYPES
+❌ Memory heavy:
+df[<span class="hljs-string">'gender'</span>] = object  # String <span class="hljs-built_in">type</span>, uses lots of memory
+
+✅ Memory efficien<span class="hljs-variable">t:</span>
+df[<span class="hljs-string">'gender'</span>] = df[<span class="hljs-string">'gender'</span>].astype(<span class="hljs-string">'category'</span>)
+
+Memory saving<span class="hljs-variable">s:</span> Up <span class="hljs-keyword">to</span> <span class="hljs-number">90</span>% <span class="hljs-keyword">for</span> categorical data!
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-number">3</span>. FILTER EARLY
+❌ Inefficien<span class="hljs-variable">t:</span>
+df_merged = pd.merge(df1, df2)  # Merge <span class="hljs-keyword">all</span> data <span class="hljs-keyword">first</span>
+result = df_merged[df_merged[<span class="hljs-string">'date'</span>] &gt; <span class="hljs-string">'2024-01-01'</span>]
+
+✅ Efficien<span class="hljs-variable">t:</span>
+df1_filtered = df1[df1[<span class="hljs-string">'date'</span>] &gt; <span class="hljs-string">'2024-01-01'</span>]
+result = pd.merge(df1_filtered, df2)
+
+Principle: Reduce data size <span class="hljs-keyword">as</span> early <span class="hljs-keyword">as</span> possible!
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-number">4</span>. USE QUERY FOR COMPLEX FILTERS
+❌ Harder <span class="hljs-keyword">to</span> <span class="hljs-keyword">read</span>:
+result = df[(df[<span class="hljs-string">'age'</span>] &gt; <span class="hljs-number">30</span>) &amp; (df[<span class="hljs-string">'bmi'</span>] &gt; <span class="hljs-number">25</span>) &amp; (df[<span class="hljs-string">'glucose'</span>] &gt; <span class="hljs-number">140</span>)]
+
+✅ Cleaner:
+result = df.query(<span class="hljs-string">'age &gt; 30 and bmi &gt; 25 and glucose &gt; 140'</span>)
+
+Bonu<span class="hljs-variable">s:</span> Often faster too!
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-number">5</span>. AVOID CHAINED INDEXING
+❌ Slow <span class="hljs-built_in">and</span> error-prone:
+df[df[<span class="hljs-string">'age'</span>] &gt; <span class="hljs-number">30</span>][<span class="hljs-string">'new_col'</span>] = value
+
+✅ Fast <span class="hljs-built_in">and</span> safe:
+df.<span class="hljs-keyword">loc</span>[df[<span class="hljs-string">'age'</span>] &gt; <span class="hljs-number">30</span>, <span class="hljs-string">'new_col'</span>] = value
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-number">6</span>. USE INPLACE=FALSE (Default <span class="hljs-keyword">is</span> better!)
+Myth: inplace=True <span class="hljs-keyword">is</span> faster
+Reality: No significant performance difference, <span class="hljs-built_in">and</span> makes code harder <span class="hljs-keyword">to</span> <span class="hljs-keyword">debug</span>
+
+✅ Better:
+df_clean = df.dropna()  # Create <span class="hljs-keyword">new</span> DataFrame
+
+─────────────────────────────────────────────────────────────
+
+<span class="hljs-number">7</span>. READ LARGE FILES IN CHUNKS
+For <span class="hljs-keyword">files</span> &gt; <span class="hljs-number">1</span>GB:
+
+<span class="hljs-keyword">for</span> chunk in pd.read_csv(<span class="hljs-string">'large_file.csv'</span>, chunksize=<span class="hljs-number">50000</span>):
+    process(chunk)
+
+Or use specific columns <span class="hljs-keyword">only</span>:
+df = pd.read_csv(<span class="hljs-string">'file.csv'</span>, usecols=[<span class="hljs-string">'col1'</span>, <span class="hljs-string">'col2'</span>, <span class="hljs-string">'col3'</span>])
+<span class="hljs-string">""</span><span class="hljs-comment">"</span>
+</code></pre>
+      <hr />
+      <p>
+        # <em>&quot;Data is the new oil, but Pandas is the refinery.&quot;</em
+        ><br /><em>— Anonymous Data Scientist</em>
+      </p>
+    </article>
+  </body>
+</html>
