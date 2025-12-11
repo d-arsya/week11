@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soal Latihan - Dataset & Starter Code</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.1em;
+        opacity: 0.9;
+      }
+
+      .card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .card-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #667eea;
+      }
+
+      .card-title h2 {
+        color: #667eea;
+        font-size: 1.5em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon {
+        font-size: 1.3em;
+      }
+
+      .copy-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9em;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .copy-btn:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .copy-btn:active {
+        transform: translateY(0);
+      }
+
+      .copy-btn.copied {
+        background: #10b981;
+      }
+
+      pre {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
+        font-size: 0.9em;
+        line-height: 1.5;
+        max-height: 600px;
+        overflow-y: auto;
+      }
+
+      .filename {
+        background: #f3f4f6;
+        color: #374151;
+        padding: 8px 15px;
+        border-radius: 6px;
+        font-family: "Consolas", monospace;
+        font-size: 0.85em;
+        display: inline-block;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      /* Syntax highlighting colors */
+      .keyword {
+        color: #c586c0;
+      }
+      .string {
+        color: #ce9178;
+      }
+      .comment {
+        color: #6a9955;
+        font-style: italic;
+      }
+      .function {
+        color: #dcdcaa;
+      }
+      .number {
+        color: #b5cea8;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 1.8em;
+        }
+
+        .card {
+          padding: 15px;
+        }
+
+        pre {
+          font-size: 0.8em;
+          padding: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📚 Soal Latihan Pemrograman</h1>
+        <p>Dataset & Starter Code - Sistem Katalog Perpustakaan</p>
+      </div>
+
+      <!-- DATASET -->
+      <div class="card">
+        <div class="card-title">
+          <h2><span class="icon">📊</span> Dataset</h2>
+          <button class="copy-btn" onclick="copyToClipboard('dataset', this)">
+            <span>📋</span> Copy
+          </button>
+        </div>
+        <div class="filename">data_buku.csv</div>
+        <pre id="dataset">
+kode_buku,judul_buku,kategori,harga
+BK001,  python DASAR ,pemrograman,Rp 85.000
+BK002,MATEMATIKA diskrit  ,sains,Rp 120.000
+BK003,  basis DATA,pemrograman,Rp 95.000
+BK004,fisika DASAR  ,sains,Rp 110.000
+BK005,  ALGORITMA pemrograman,pemrograman,Rp 90.000
+BK006,kimia ORGANIK,sains,Rp 105.000
+BK007,STRUKTUR data  ,pemrograman,Rp 88.000
+BK008,  biologi SEL,sains,Rp 115.000
+BK009,WEB programming  ,pemrograman,Rp 92.000
+BK010,  KALKULUS lanjut,sains,Rp 125.000</pre
+        >
+      </div>
+
+      <!-- STARTER CODE -->
+      <div class="card">
+        <div class="card-title">
+          <h2><span class="icon">💻</span> Starter Code</h2>
+          <button class="copy-btn" onclick="copyToClipboard('code', this)">
+            <span>📋</span> Copy
+          </button>
+        </div>
+        <div class="filename">Starter_Code_Buku.py</div>
+        <pre id="code">
+import pandas as pd
+import datetime
+
+def rapikan_judul(judul_raw):
+    """
+    String judul kotor (misal: "  python DASAR ")
+    String judul rapi (misal: "Python Dasar")
+    """
+    
+    return judul_raw
+
+
+def klasifikasi_harga(df):
+    """
+    Klasifikasi harga: Murah/Sedang/Mahal
+    - < 90000: "Murah"
+    - 90000-110000: "Sedang"  
+    - > 110000: "Mahal"
+    """
+    # TODO 4: Buat kolom 'klasifikasi_harga':
+    
+    return df
+
+
+def proses_data_buku(filename):
+    """
+    Fungsi utama untuk membaca dan memproses data CSV.
+    """
+    print(f"Membaca file {filename}...")
+
+    df = None
+    
+    # TODO 2b: Terapkan fungsi 'rapikan_judul' ke kolom 'judul_buku'
+    
+    
+    # TODO 2c: Bersihkan kolom 'harga' agar menjadi Integer
+    
+    
+    # TODO 2d: Tambahkan kolom 'klasifikasi_harga'
+    
+    return df
+
+
+def buat_laporan_txt(df):
+    """
+    Fungsi untuk membuat laporan dalam file txt.
+    """
+    
+    # Hitung Statistik
+    total_buku = 100
+    total_harga = 0
+    
+    waktu_sekarang = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    nama_file = "laporan_buku.txt"
+    
+    # TODO 3b: Buka file dan tulis laporan sesuai format
+        
+    print(f"Laporan disimpan di {nama_file}")
+
+
+if __name__ == "__main__":
+    df_hasil = proses_data_buku("data_buku.csv")
+    
+    # Preview
+    print("\n--- PREVIEW DATA ---")
+    print(df_hasil.head())
+    print("--------------------\n")
+    
+    # 2. Buat Laporan
+    buat_laporan_txt(df_hasil)
+    
+    print("Program selesai!")
+        
+    </pre
+        >
+      </div>
+    </div>
+
+    <script>
+      function copyToClipboard(elementId, button) {
+        const element = document.getElementById(elementId);
+        const text = element.textContent;
+
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            // Change button appearance
+            const originalHTML = button.innerHTML;
+            button.innerHTML = "<span>✅</span> Copied!";
+            button.classList.add("copied");
+
+            // Reset after 2 seconds
+            setTimeout(() => {
+              button.innerHTML = originalHTML;
+              button.classList.remove("copied");
+            }, 2000);
+          })
+          .catch((err) => {
+            alert("Gagal copy! Silakan copy manual.");
+            console.error("Copy error:", err);
+          });
+      }
+    </script>
+  </body>
+</html>
