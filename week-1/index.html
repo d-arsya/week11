@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Soal Latihan - Dataset & Starter Code</title>
+    <title>5 Soal Latihan Sederhana - 1 Fungsi Per Soal</title>
+
     <style>
       * {
         margin: 0;
@@ -19,7 +20,7 @@
       }
 
       .container {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
       }
 
@@ -40,15 +41,26 @@
         opacity: 0.9;
       }
 
+      .soal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
       .card {
         background: white;
         border-radius: 12px;
         padding: 25px;
-        margin-bottom: 25px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s;
       }
 
-      .card-title {
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      .card-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -57,41 +69,62 @@
         border-bottom: 3px solid #667eea;
       }
 
-      .card-title h2 {
+      .card-title {
         color: #667eea;
-        font-size: 1.5em;
+        font-size: 1.3em;
+        font-weight: bold;
         display: flex;
         align-items: center;
         gap: 10px;
       }
 
-      .icon {
-        font-size: 1.3em;
+      .difficulty {
+        background: #10b981;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 600;
+      }
+
+      .soal-desc {
+        background: #f0f9ff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 4px solid #667eea;
+      }
+
+      .soal-desc p {
+        color: #1e293b;
+        line-height: 1.6;
+        margin-bottom: 8px;
+      }
+
+      .soal-desc strong {
+        color: #667eea;
       }
 
       .copy-btn {
         background: #667eea;
         color: white;
         border: none;
-        padding: 10px 20px;
+        padding: 8px 16px;
         border-radius: 6px;
         cursor: pointer;
-        font-size: 0.9em;
+        font-size: 0.85em;
         font-weight: 600;
         transition: all 0.3s;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
+        margin-top: 10px;
       }
 
       .copy-btn:hover {
         background: #5568d3;
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-      }
-
-      .copy-btn:active {
-        transform: translateY(0);
       }
 
       .copy-btn.copied {
@@ -101,16 +134,26 @@
       pre {
         background: #1e1e1e;
         color: #d4d4d4;
-        padding: 20px;
+        padding: 15px;
         border-radius: 8px;
         overflow-x: auto;
         font-family: "Consolas", "Monaco", "Courier New", monospace;
-        font-size: 0.9em;
+        font-size: 0.85em;
         line-height: 1.5;
-        max-height: 600px;
+        max-height: 400px;
         overflow-y: auto;
       }
 
+      .section-label {
+        background: #667eea;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 0.8em;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 8px;
+      }
       .filename {
         background: #f3f4f6;
         color: #374151;
@@ -123,173 +166,417 @@
         font-weight: 600;
       }
 
-      /* Syntax highlighting colors */
-      .keyword {
-        color: #c586c0;
-      }
-      .string {
-        color: #ce9178;
-      }
-      .comment {
-        color: #6a9955;
-        font-style: italic;
-      }
-      .function {
-        color: #dcdcaa;
-      }
-      .number {
-        color: #b5cea8;
-      }
-
       @media (max-width: 768px) {
+        .soal-grid {
+          grid-template-columns: 1fr;
+        }
+
         .header h1 {
           font-size: 1.8em;
-        }
-
-        .card {
-          padding: 15px;
-        }
-
-        pre {
-          font-size: 0.8em;
-          padding: 15px;
         }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="header">
-        <h1>📚 Soal Latihan Pemrograman</h1>
-        <p>Dataset & Starter Code - Sistem Katalog Perpustakaan</p>
-      </div>
-
-      <!-- DATASET -->
-      <div class="card">
-        <div class="card-title">
-          <h2><span class="icon">📊</span> Dataset</h2>
-          <button class="copy-btn" onclick="copyToClipboard('dataset', this)">
-            <span>📋</span> Copy
-          </button>
+      <div class="soal-grid">
+        <div class="card">
+          <div class="card-title">
+            <h2><span class="icon">📊</span> Dataset</h2>
+            <button class="copy-btn" onclick="copyToClipboard('dataset', this)">
+              <span>📋</span> Copy
+            </button>
+          </div>
+          <div class="filename">data_buku.csv</div>
+          <pre id="dataset">
+    kode_buku,judul_buku,kategori,harga
+    BK001,  python DASAR ,pemrograman,Rp 85.000
+    BK002,MATEMATIKA diskrit  ,sains,Rp 120.000
+    BK003,  basis DATA,pemrograman,Rp 95.000
+    BK004,fisika DASAR  ,sains,Rp 110.000
+    BK005,  ALGORITMA pemrograman,pemrograman,Rp 90.000
+    BK006,kimia ORGANIK,sains,Rp 105.000
+    BK007,STRUKTUR data  ,pemrograman,Rp 88.000
+    BK008,  biologi SEL,sains,Rp 115.000
+    BK009,WEB programming  ,pemrograman,Rp 92.000
+    BK010,  KALKULUS lanjut,sains,Rp 125.000</pre
+          >
         </div>
-        <div class="filename">data_buku.csv</div>
-        <pre id="dataset">
-kode_buku,judul_buku,kategori,harga
-BK001,  python DASAR ,pemrograman,Rp 85.000
-BK002,MATEMATIKA diskrit  ,sains,Rp 120.000
-BK003,  basis DATA,pemrograman,Rp 95.000
-BK004,fisika DASAR  ,sains,Rp 110.000
-BK005,  ALGORITMA pemrograman,pemrograman,Rp 90.000
-BK006,kimia ORGANIK,sains,Rp 105.000
-BK007,STRUKTUR data  ,pemrograman,Rp 88.000
-BK008,  biologi SEL,sains,Rp 115.000
-BK009,WEB programming  ,pemrograman,Rp 92.000
-BK010,  KALKULUS lanjut,sains,Rp 125.000</pre
-        >
-      </div>
 
-      <!-- STARTER CODE -->
-      <div class="card">
-        <div class="card-title">
-          <h2><span class="icon">💻</span> Starter Code</h2>
-          <button class="copy-btn" onclick="copyToClipboard('code', this)">
-            <span>📋</span> Copy
-          </button>
+        <!-- STARTER CODE -->
+        <div class="card">
+          <div class="card-title">
+            <h2><span class="icon">💻</span> Starter Code</h2>
+            <button class="copy-btn" onclick="copyToClipboard('code', this)">
+              <span>📋</span> Copy
+            </button>
+          </div>
+          <div class="filename">Starter_Code_Buku.py</div>
+          <pre id="code">
+    import pandas as pd
+    import datetime
+    
+    def rapikan_judul(judul_raw):
+        """
+        String judul kotor (misal: "  python DASAR ")
+        String judul rapi (misal: "Python Dasar")
+        """
+        
+        return judul_raw
+    
+    
+    def klasifikasi_harga(df):
+        """
+        Klasifikasi harga: Murah/Sedang/Mahal
+        - < 90000: "Murah"
+        - 90000-110000: "Sedang"  
+        - > 110000: "Mahal"
+        """
+        # TODO 4: Buat kolom 'klasifikasi_harga':
+        
+        return df
+    
+    
+    def proses_data_buku(filename):
+        """
+        Fungsi utama untuk membaca dan memproses data CSV.
+        """
+        print(f"Membaca file {filename}...")
+    
+        df = None
+        
+        # TODO 2b: Terapkan fungsi 'rapikan_judul' ke kolom 'judul_buku'
+        
+        
+        # TODO 2c: Bersihkan kolom 'harga' agar menjadi Integer
+        
+        
+        # TODO 2d: Tambahkan kolom 'klasifikasi_harga'
+        
+        return df
+    
+    
+    def buat_laporan_txt(df):
+        """
+        Fungsi untuk membuat laporan dalam file txt.
+        """
+        
+        # Hitung Statistik
+        total_buku = 100
+        total_harga = 0
+        
+        waktu_sekarang = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        nama_file = "laporan_buku.txt"
+        
+        # TODO 3b: Buka file dan tulis laporan sesuai format
+            
+        print(f"Laporan disimpan di {nama_file}")
+    
+    
+    if __name__ == "__main__":
+        df_hasil = proses_data_buku("data_buku.csv")
+        
+        # Preview
+        print("\n--- PREVIEW DATA ---")
+        print(df_hasil.head())
+        print("--------------------\n")
+        
+        # 2. Buat Laporan
+        buat_laporan_txt(df_hasil)
+        
+        print("Program selesai!")
+            
+        </pre
+          >
         </div>
-        <div class="filename">Starter_Code_Buku.py</div>
-        <pre id="code">
+        <!-- SOAL 1 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span>📝</span>Bersihkan Nama</div>
+          </div>
+
+          <div class="soal-desc">
+            <p>
+              <strong>Tugas:</strong> Buat fungsi untuk membersihkan nama (hapus
+              spasi, title case)
+            </p>
+            <p><strong>Input:</strong> <code>" ANDI santoso "</code></p>
+            <p><strong>Output:</strong> <code>"Andi Santoso"</code></p>
+          </div>
+
+          <div class="section-label">📊 Dataset</div>
+          <pre id="soal1-data">
+nama
+  ANDI santoso  
+BUDI RAHARDJO
+  siti NURHALIZA
+JOKO widodo  
+  RINA marlina</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal1-data', this)">
+            📋 Copy Dataset
+          </button>
+
+          <div class="section-label" style="margin-top: 15px">
+            💻 Starter Code
+          </div>
+          <pre id="soal1-code">
 import pandas as pd
-import datetime
 
-def rapikan_judul(judul_raw):
+def bersihkan_nama(nama):
     """
-    String judul kotor (misal: "  python DASAR ")
-    String judul rapi (misal: "Python Dasar")
+    TODO: Lengkapi fungsi ini
+    Hapus spasi di awal/akhir dan ubah ke Title Case
     """
-    
-    return judul_raw
+    return nama  # Ganti dengan kode yang benar
 
+# Main program
+df = pd.read_csv("soal1.csv")
+df['nama_bersih'] = df['nama'].apply(bersihkan_nama)
+print(df)</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal1-code', this)">
+            📋 Copy Code
+          </button>
+        </div>
 
-def klasifikasi_harga(df):
+        <!-- SOAL 2 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span>💰</span>Konversi Harga</div>
+          </div>
+
+          <div class="soal-desc">
+            <p>
+              <strong>Tugas:</strong> Buat fungsi untuk mengubah format harga ke
+              integer
+            </p>
+            <p><strong>Input:</strong> <code>"Rp 150.000"</code></p>
+            <p><strong>Output:</strong> <code>150000</code> (integer)</p>
+          </div>
+
+          <div class="section-label">📊 Dataset</div>
+          <pre id="soal2-data">
+produk,harga
+Laptop,Rp 5.500.000
+Mouse,Rp 125.000
+Keyboard,Rp 350.000
+Monitor,Rp 2.100.000
+Headset,Rp 275.000</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal2-data', this)">
+            📋 Copy Dataset
+          </button>
+
+          <div class="section-label" style="margin-top: 15px">
+            💻 Starter Code
+          </div>
+          <pre id="soal2-code">
+import pandas as pd
+
+def konversi_harga(harga_str):
     """
-    Klasifikasi harga: Murah/Sedang/Mahal
-    - < 90000: "Murah"
-    - 90000-110000: "Sedang"  
-    - > 110000: "Mahal"
+    TODO: Lengkapi fungsi ini
+    1. Hapus "Rp " dan spasi
+    2. Hapus tanda titik "."
+    3. Ubah ke integer
     """
-    # TODO 4: Buat kolom 'klasifikasi_harga':
-    
-    return df
+    return 0  # Ganti dengan kode yang benar
 
+# Main program
+df = pd.read_csv("soal2.csv")
+df['harga_int'] = df['harga'].apply(konversi_harga)
+print(df)
+print(f"\nTotal: Rp {df['harga_int'].sum():,}")</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal2-code', this)">
+            📋 Copy Code
+          </button>
+        </div>
 
-def proses_data_buku(filename):
+        <!-- SOAL 3 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span>🏷️</span>Kategorisasi Nilai</div>
+          </div>
+
+          <div class="soal-desc">
+            <p>
+              <strong>Tugas:</strong> Buat fungsi untuk mengkategorikan nilai
+              ujian
+            </p>
+            <p>
+              <strong>Kategori:</strong> < 60: Kurang | 60-80: Cukup | > 80:
+              Baik
+            </p>
+          </div>
+
+          <div class="section-label">📊 Dataset</div>
+          <pre id="soal3-data">
+nim,nama,nilai
+001,Andi,85
+002,Budi,55
+003,Citra,75
+004,Doni,92
+005,Eka,68</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal3-data', this)">
+            📋 Copy Dataset
+          </button>
+
+          <div class="section-label" style="margin-top: 15px">
+            💻 Starter Code
+          </div>
+          <pre id="soal3-code">
+import pandas as pd
+
+def kategorisasi_nilai(nilai):
     """
-    Fungsi utama untuk membaca dan memproses data CSV.
+    TODO: Lengkapi fungsi ini
+    Return: "Kurang", "Cukup", atau "Baik"
     """
-    print(f"Membaca file {filename}...")
+    return ""  # Ganti dengan kode yang benar
 
-    df = None
-    
-    # TODO 2b: Terapkan fungsi 'rapikan_judul' ke kolom 'judul_buku'
-    
-    
-    # TODO 2c: Bersihkan kolom 'harga' agar menjadi Integer
-    
-    
-    # TODO 2d: Tambahkan kolom 'klasifikasi_harga'
-    
-    return df
+# Main program
+df = pd.read_csv("soal3.csv")
+df['kategori'] = df['nilai'].apply(kategorisasi_nilai)
+print(df)</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal3-code', this)">
+            📋 Copy Code
+          </button>
+        </div>
 
+        <!-- SOAL 4 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Generate Email</div>
+          </div>
 
-def buat_laporan_txt(df):
+          <div class="soal-desc">
+            <p>
+              <strong>Tugas:</strong> Buat fungsi untuk generate email dari nama
+            </p>
+            <p>
+              <strong>Format:</strong> nama.depan.belakang@company.com
+              (lowercase)
+            </p>
+            <p>
+              <strong>Contoh:</strong> "Andi Wijaya" → "andi.wijaya@company.com"
+            </p>
+          </div>
+
+          <div class="section-label">📊 Dataset</div>
+          <pre id="soal4-data">
+id,nama_lengkap
+101,Andi Wijaya
+102,Budi Santoso
+103,Citra Dewi
+104,Doni Pratama
+105,Eka Putri</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal4-data', this)">
+            📋 Copy Dataset
+          </button>
+
+          <div class="section-label" style="margin-top: 15px">
+            💻 Starter Code
+          </div>
+          <pre id="soal4-code">
+import pandas as pd
+
+def generate_email(nama_lengkap):
     """
-    Fungsi untuk membuat laporan dalam file txt.
+    TODO: Lengkapi fungsi ini
+    1. Split nama menjadi list
+    2. Join dengan titik
+    3. Lowercase semua
+    4. Tambahkan @company.com
     """
-    
-    # Hitung Statistik
-    total_buku = 100
-    total_harga = 0
-    
-    waktu_sekarang = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    nama_file = "laporan_buku.txt"
-    
-    # TODO 3b: Buka file dan tulis laporan sesuai format
-        
-    print(f"Laporan disimpan di {nama_file}")
+    return ""  # Ganti dengan kode yang benar
 
+# Main program
+df = pd.read_csv("soal4.csv")
+df['email'] = df['nama_lengkap'].apply(generate_email)
+print(df)</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal4-code', this)">
+            📋 Copy Code
+          </button>
+        </div>
 
-if __name__ == "__main__":
-    df_hasil = proses_data_buku("data_buku.csv")
-    
-    # Preview
-    print("\n--- PREVIEW DATA ---")
-    print(df_hasil.head())
-    print("--------------------\n")
-    
-    # 2. Buat Laporan
-    buat_laporan_txt(df_hasil)
-    
-    print("Program selesai!")
-        
-    </pre
-        >
+        <!-- SOAL 5 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Tulis ke File</div>
+          </div>
+
+          <div class="soal-desc">
+            <p>
+              <strong>Tugas:</strong> Buat fungsi untuk menulis ringkasan ke
+              file txt
+            </p>
+            <p>
+              <strong>Output:</strong> File berisi total mahasiswa dan rata-rata
+              nilai
+            </p>
+          </div>
+
+          <div class="section-label">📊 Dataset</div>
+          <pre id="soal5-data">
+nama,nilai
+Andi,85
+Budi,72
+Citra,90
+Doni,68
+Eka,78</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal5-data', this)">
+            📋 Copy Dataset
+          </button>
+
+          <div class="section-label" style="margin-top: 15px">
+            💻 Starter Code
+          </div>
+          <pre id="soal5-code">
+import pandas as pd
+
+def tulis_ringkasan(df, nama_file):
+    """
+    TODO: Lengkapi fungsi ini
+    1. Hitung total mahasiswa (len)
+    2. Hitung rata-rata nilai (.mean())
+    3. Tulis ke file dengan format:
+       Total Mahasiswa: [jumlah]
+       Rata-rata Nilai: [rata-rata]
+    """
+    # Tulis kode di sini
+    pass
+
+# Main program
+df = pd.read_csv("soal5.csv")
+tulis_ringkasan(df, "ringkasan.txt")
+print("File ringkasan.txt berhasil dibuat!")</pre
+          >
+          <button class="copy-btn" onclick="copyCode('soal5-code', this)">
+            📋 Copy Code
+          </button>
+        </div>
       </div>
     </div>
 
     <script>
-      function copyToClipboard(elementId, button) {
+      function copyCode(elementId, button) {
         const element = document.getElementById(elementId);
         const text = element.textContent;
 
         navigator.clipboard
           .writeText(text)
           .then(() => {
-            // Change button appearance
             const originalHTML = button.innerHTML;
-            button.innerHTML = "<span>✅</span> Copied!";
+            button.innerHTML = "✅ Copied!";
             button.classList.add("copied");
 
-            // Reset after 2 seconds
             setTimeout(() => {
               button.innerHTML = originalHTML;
               button.classList.remove("copied");
@@ -297,7 +584,6 @@ if __name__ == "__main__":
           })
           .catch((err) => {
             alert("Gagal copy! Silakan copy manual.");
-            console.error("Copy error:", err);
           });
       }
     </script>
