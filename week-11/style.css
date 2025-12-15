@@ -23,18 +23,13 @@
   --flow-space: 1.25rem;
 }
 .language-python {
-  filter: blur(0.6px);
+  /* filter: blur(0.6px); */
   display: inline-block;
-  transform: rotate(-0.05deg);
-  text-shadow: 1px 0 6px rgba(255, 0, 0, 0.9);
+  /* transform: rotate(-0.05deg); */
+  /* text-shadow: 1px 0 6px rgba(255, 0, 0, 0.9); */
   font-family: Arial, sans-serif;
 }
-body {
-  user-select: none; /* Prevent text selection */
-  -webkit-user-select: none; /* Safari/Chrome */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+ */
-}
+
 /* Dark-mode overrides */
 @media (prefers-color-scheme: dark) {
   :root {

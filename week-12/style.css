@@ -7,7 +7,7 @@
   /* transform: rotate(-0.05deg); */
   /* text-shadow: 1px 0 6px rgba(255, 0, 0, 0.9); */
   /* font-family: "Patrick Hand", sans-serif; */
-  font-family: "Patrick Hand", cursive !important;
+  /* font-family: "Patrick Hand", cursive !important; */
   font-weight: 400;
   font-style: normal;
 }
@@ -30,12 +30,6 @@
   --flow-space: 1.25rem;
 }
 
-body {
-  user-select: none; /* Prevent text selection */
-  -webkit-user-select: none; /* Safari/Chrome */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+ */
-}
 /* Dark-mode overrides */
 @media (prefers-color-scheme: dark) {
   :root {
